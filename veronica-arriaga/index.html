@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graduación - Lic. Verónica Arriaga Salinas</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Music Control -->
+    <div class="music-control" id="musicControl">
+        <i class="fas fa-volume-xmark" id="musicIcon"></i>
+    </div>
+
+    <!-- Background Audio -->
+    <audio id="backgroundMusic" loop>
+        <source src="a-star-shines-for-you.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container">
+        <!-- Header Section -->
+        <section class="section header-section">
+            <div class="crown-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h1 class="main-title">Mi</h1>
+            <h1 class="main-title">Graduación</h1>
+            <p class="subtitle">Una celebración mágica</p>
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </section>
+
+        <!-- Invitation Section -->
+        <section class="section">
+            <div class="invitation-card">
+                <div class="crown-icon" style="font-size: 2rem; margin-bottom: 1rem;">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h2 class="section-title" style="margin-bottom: 2rem;">Invitación</h2>
+                <p class="invitation-text">
+                    Tengo el <span class="highlight">honor de invitarte</span> a celebrar conmigo este momento tan
+                    especial.
+                </p>
+                <p class="invitation-text">
+                    Después de años de dedicación y esfuerzo, finalmente llеgа el momento de celebrar la culminación de
+                    la
+                    <span class="highlight">Licenciatura en Pedagogía</span>
+                </p>
+                <p class="invitation-text">
+                    Generación <span class="highlight">2022-2025</span>
+                </p>
+                <p class="invitation-text">
+                    Tu presencia haría de este día aún más especial. ¡Ven a compartir esta alegría conmigo!
+                </p>
+            </div>
+        </section>
+
+        <!-- Mother's Words Section -->
+        <section class="section words-section">
+            <div class="quote-container">
+                <h2 class="section-title">Unas Palabras</h2>
+                <div class="quote-marks">"</div>
+                <p class="mother-words">
+                    Este camino no ha sido fácil, pero cada paso ha valido la pena. La educación es el regalo más
+                    valioso que podemos dar al mundo, y estoy emocionada de compartir este logro con las personas más
+                    importantes de mi vida. Gracias por ser parte de mi historia y por acompañarme en este nuevo
+                    capítulo.
+                </p>
+                <div class="quote-marks" style="transform: rotate(180deg);">"</div>
+                <p class="signature">Con cariño,<br><strong>Lic. Verónica Arriaga Salinas</strong></p>
+            </div>
+        </section>
+
+        <!-- Countdown Section -->
+        <section class="section">
+            <div class="countdown-container">
+                <h2 class="countdown-title">
+                    <i class="fas fa-clock" style="margin-right: 1rem;"></i>
+                    Faltan
+                </h2>
+                <div class="countdown-display" id="countdown">
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="days">0</span>
+                        <span class="countdown-label">Días</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="hours">0</span>
+                        <span class="countdown-label">Horas</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="minutes">0</span>
+                        <span class="countdown-label">Minutos</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="seconds">0</span>
+                        <span class="countdown-label">Segundos</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details Section -->
+        <section class="section">
+            <h2 class="section-title">Detalles del Evento</h2>
+            <div class="details-grid">
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3 class="detail-title">Fecha y Hora</h3>
+                    <p class="detail-info">
+                        <strong>30 de Agosto, 2025</strong><br>
+                        6:30 PM<br>
+                        <small>Puntualidad es importante</small>
+                    </p>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="detail-title">Ubicación</h3>
+                    <p class="detail-info">
+                        <strong>Salón Finca el Sol</strong><br>
+                        Eucalipto, El Fresno<br>
+                        Cortazar, Guanajuato
+                    </p>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-tshirt"></i>
+                    </div>
+                    <h3 class="detail-title">Código de Vestimenta</h3>
+                    <p class="detail-info">
+                        <strong>Formal</strong><br>
+                        Traje o vestido elegante<br>
+                        <small>Ven con tu mejor atuendo</small>
+                    </p>
+                </div>
+                <div class="detail-card">
+                    <div class="detail-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h3 class="detail-title">¿No Puedes Asistir?</h3>
+                    <p class="detail-info">
+                        Por favor avísanos con <strong>tiempo</strong><br>
+                        Los lugares son <strong>limitados</strong><br>
+                        <small>Tu consideración es importante</small>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Map Section -->
+        <section class="section">
+            <h2 class="section-title">¿Cómo Llegar?</h2>
+            <div class="map-container">
+                <div id="leafletMap" class="map-embed"></div>
+                <div class="map-buttons">
+                    <a href="https://www.google.com/maps/dir//Finca+El+Sol,+Eucalipto,+El+Fresno,+Cortazar,+Guanajuato"
+                        target="_blank" class="map-btn">
+                        <i class="fab fa-google"></i> Google Maps
+                    </a>
+                    <a href="https://maps.apple.com/?daddr=20.478539,-100.975340" target="_blank" class="map-btn">
+                        <i class="fab fa-apple"></i> Apple Maps
+                    </a>
+                    <a href="https://waze.com/ul?ll=20.478539,-100.975340&navigate=yes" target="_blank" class="map-btn">
+                        <i class="fab fa-waze"></i> Waze
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section class="section">
+            <h2 class="section-title">Mi Trayectoria Académica</h2>
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2022</div>
+                        <div class="timeline-event">Inicio de la Licenciatura en Pedagogía - El comienzo de un sueño
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2023-2024</div>
+                        <div class="timeline-event">Años de estudio intensivo, prácticas profesionales y crecimiento
+                            personal</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2025</div>
+                        <div class="timeline-event">¡Graduación! Culminación exitosa de la carrera</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">Futuro</div>
+                        <div class="timeline-event">Aplicar conocimientos para hacer la diferencia en la educación</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section class="section">
+            <h2 class="section-title">Galería de Recuerdos</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item" onclick="openImageUpload('photo1')">
+                    <div class="gallery-placeholder" id="photo1">
+                        <i class="fas fa-camera"></i>
+                        <p>Foto con Toga</p>
+                        <small>Click para agregar</small>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openImageUpload('photo2')">
+                    <div class="gallery-placeholder" id="photo2">
+                        <i class="fas fa-graduation-cap"></i>
+                        <p>Ceremonia</p>
+                        <small>Click para agregar</small>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openImageUpload('photo3')">
+                    <div class="gallery-placeholder" id="photo3">
+                        <i class="fas fa-book"></i>
+                        <p>Estudios</p>
+                        <small>Click para agregar</small>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openImageUpload('photo4')">
+                    <div class="gallery-placeholder" id="photo4">
+                        <i class="fas fa-users"></i>
+                        <p>Compañeros</p>
+                        <small>Click para agregar</small>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openImageUpload('photo5')">
+                    <div class="gallery-placeholder" id="photo5">
+                        <i class="fas fa-heart"></i>
+                        <p>Familia</p>
+                        <small>Click para agregar</small>
+                    </div>
+                </div>
+                <div class="gallery-item" onclick="openImageUpload('photo6')">
+                    <div class="gallery-placeholder" id="photo6">
+                        <i class="fas fa-star"></i>
+                        <p>Momentos Especiales</p>
+                        <small>Click para agregar</small>
+                    </div>
+                </div>
+            </div>
+            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+        </section>
+
+        <!-- RSVP Section -->
+        <section class="section">
+            <h2 class="section-title">Confirmación de Asistencia</h2>
+            <div class="rsvp-form">
+                <form id="rsvpForm">
+                    <div class="form-group">
+                        <label class="form-label" for="guestName">
+                            <i class="fas fa-user"></i> Nombre Completo
+                        </label>
+                        <input type="text" id="guestName" class="form-input" placeholder="Tu nombre completo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="guestPhone">
+                            <i class="fas fa-phone"></i> Teléfono
+                        </label>
+                        <input type="tel" id="guestPhone" class="form-input" placeholder="Tu número de teléfono"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="guestCount">
+                            <i class="fas fa-users"></i> ¿Cuántas personas asistirán?
+                        </label>
+                        <select id="guestCount" class="form-select" required>
+                            <option value="">Selecciona...</option>
+                            <option value="1">Solo yo</option>
+                            <option value="2">2 personas</option>
+                            <option value="3">3 personas</option>
+                            <option value="4">4 personas</option>
+                            <option value="5">5 personas</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="additionalNamesGroup" style="display: none;">
+                        <label class="form-label" for="additionalNames">
+                            <i class="fas fa-list"></i> Nombres de acompañantes
+                        </label>
+                        <textarea id="additionalNames" class="form-textarea"
+                            placeholder="Nombres de las personas que te acompañarán"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="comments">
+                            <i class="fas fa-comment"></i> Comentarios especiales
+                        </label>
+                        <textarea id="comments" class="form-textarea"
+                            placeholder="Algún mensaje especial o comentario"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Confirmar Asistencia
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Farewell Section -->
+        <section class="section farewell-section">
+            <div class="farewell-content">
+                <h2 class="farewell-title">¡Gracias!</h2>
+                <p class="farewell-text">
+                    Tu presencia en este día tan especial significa el mundo para mí. Este logro no habría sido posible
+                    sin el apoyo y cariño de personas maravillosas como tú.
+                </p>
+                <p class="farewell-text">
+                    ¡Nos vemos en la celebración!
+                </p>
+                <div class="heart-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <p style="margin-top: 2rem; font-size: 1rem; opacity: 0.8;">
+                    Con amor,<br>
+                    <strong>Familia Bernal Arriaga</strong>
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

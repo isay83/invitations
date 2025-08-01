@@ -1,0 +1,967 @@
+@import url('https://fonts.cdnfonts.com/css/walt-disney-script');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Georgia', serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #f5f5f5;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+.section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    position: relative;
+    scroll-snap-align: start;
+    overflow-y: auto;
+}
+
+.container {
+    scroll-snap-type: y mandatory;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+/* Magical particles */
+.particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: gold;
+    border-radius: 50%;
+    animation: float 6s infinite linear;
+    opacity: 0.7;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 0.7;
+    }
+
+    90% {
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translateY(-10vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
+/* Header Section */
+.header-section {
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:%23ffd700;stop-opacity:0.1" /><stop offset="100%" style="stop-color:%23000;stop-opacity:0.3" /></radialGradient></defs><rect width="1000" height="600" fill="url(%23grad1)"/></svg>');
+    background-size: cover;
+    text-align: center;
+}
+
+.crown-icon {
+    font-size: 4rem;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+    from {
+        text-shadow: 0 0 20px #ffd700;
+    }
+
+    to {
+        text-shadow: 0 0 30px #ffd700, 0 0 40px #ffd700;
+    }
+}
+
+.main-title {
+    font-size: 3.5rem;
+    font-weight: bold;
+    /*font-family: 'Walt Disney Script';*/
+    margin-bottom: 1rem;
+    background: linear-gradient(45deg, #ffd700, #fff, #ffd700);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.main-title:first-of-type {
+    margin-bottom: 0.2rem;
+    /* Agregar para "Mi" */
+}
+
+.main-title:last-of-type {
+    margin-bottom: 1rem;
+    /* Para "Graduación" */
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: #e0e0e0;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #ffd700;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    40% {
+        transform: translateX(-50%) translateY(-10px);
+    }
+
+    60% {
+        transform: translateX(-50%) translateY(-5px);
+    }
+}
+
+/* Invitation Section */
+.invitation-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 800px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.invitation-text {
+    font-size: 1.4rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+}
+
+.highlight {
+    color: #ffd700;
+    font-weight: bold;
+}
+
+/* Words Section */
+.words-section {
+    background: rgba(16, 33, 94, 0.8);
+}
+
+.quote-container {
+    max-width: 700px;
+    text-align: center;
+    position: relative;
+}
+
+.quote-marks {
+    font-size: 4rem;
+    color: #ffd700;
+    opacity: 0.3;
+}
+
+.mother-words {
+    font-size: 1.3rem;
+    font-style: italic;
+    line-height: 1.6;
+    margin: 2rem 0;
+}
+
+.signature {
+    font-size: 1.5rem;
+    color: #ffd700;
+    font-weight: bold;
+    margin-top: 2rem;
+}
+
+/* Countdown Section */
+.countdown-container {
+    text-align: center;
+}
+
+.countdown-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #ffd700;
+}
+
+.countdown-display {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.countdown-item {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 1.5rem;
+    min-width: 120px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.countdown-number {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #ffd700;
+    display: block;
+}
+
+.countdown-label {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Event Details Section */
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.detail-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.detail-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.2);
+}
+
+.detail-icon {
+    font-size: 2.5rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+}
+
+.detail-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #ffd700;
+}
+
+.detail-info {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* Map Section */
+.map-container {
+    width: 100%;
+    max-width: 800px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 2rem;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease-in-out;
+}
+
+.map-container:hover {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+}
+
+.map-embed {
+    width: 100%;
+    height: 300px;
+    border-radius: 15px;
+    border: none;
+}
+
+.map-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.map-btn {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #1a1a2e;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.map-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
+}
+
+/* Leaflet Map Styles */
+.leaflet-container {
+    background: #1a1a2e !important;
+}
+
+.leaflet-tile {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.leaflet-control-zoom a {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+    color: #ffd700 !important;
+}
+
+.leaflet-control-zoom a:hover {
+    background-color: rgba(255, 215, 0, 0.2) !important;
+}
+
+.leaflet-control-attribution {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.leaflet-control-attribution a {
+    color: #ffd700 !important;
+}
+
+/* Custom marker styles */
+.custom-marker {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    border: 3px solid #1a1a2e;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1a1a2e;
+    font-weight: bold;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+}
+
+.leaflet-popup-content-wrapper {
+    background: rgba(26, 26, 46, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 2px solid rgba(255, 215, 0, 0.3) !important;
+    border-radius: 15px !important;
+    color: #f5f5f5 !important;
+}
+
+.leaflet-popup-content {
+    color: #f5f5f5 !important;
+    text-align: center;
+}
+
+.leaflet-popup-tip {
+    background: rgba(26, 26, 46, 0.95) !important;
+    border: 1px solid rgba(255, 215, 0, 0.3) !important;
+}
+
+.leaflet-popup-close-button {
+    color: #ffd700 !important;
+    font-size: 18px !important;
+    font-weight: bold !important;
+}
+
+.leaflet-popup-close-button:hover {
+    color: #ffed4e !important;
+}
+
+/* Timeline Section */
+.timeline-container {
+    max-width: 800px;
+    width: 100%;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.timeline-item:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.timeline-item:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.timeline-item:nth-child(4) {
+    animation-delay: 0.6s;
+}
+
+.timeline-item:nth-child(5) {
+    animation-delay: 0.8s;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.timeline-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 2rem;
+    flex-shrink: 0;
+}
+
+.timeline-icon i {
+    color: #1a1a2e;
+    font-size: 1.5rem;
+}
+
+.timeline-content {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    flex: 1;
+}
+
+.timeline-year {
+    color: #ffd700;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.timeline-event {
+    margin-top: 0.5rem;
+    line-height: 1.5;
+}
+
+/* Gallery Section */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.gallery-item {
+    aspect-ratio: 1;
+    border-radius: 15px;
+    overflow: hidden;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.gallery-item:hover {
+    transform: scale(1.05);
+    border-color: #ffd700;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+.gallery-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 255, 255, 0.1));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    padding: 1rem;
+}
+
+.gallery-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: #ffd700;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* RSVP Section */
+.rsvp-form {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #ffd700;
+    font-weight: bold;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 1rem;
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    font-size: 1rem;
+    backdrop-filter: blur(5px);
+    transition: border-color 0.3s ease;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: #ffd700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.form-textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.submit-btn {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #1a1a2e;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.4);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Farewell Section */
+.farewell-section {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%);
+    text-align: center;
+}
+
+.farewell-content {
+    max-width: 600px;
+}
+
+.farewell-title {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #ffd700;
+}
+
+.farewell-text {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.heart-icon {
+    font-size: 3rem;
+    color: #ff6b6b;
+    animation: heartbeat 1.5s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* Music Control */
+.music-control {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.music-control:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: scale(1.1);
+}
+
+.music-control i {
+    color: #ffd700;
+    font-size: 1.5rem;
+}
+
+/* Section titles */
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+    color: #ffd700;
+    text-align: center;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    border-radius: 2px;
+}
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    border-top-color: #ffd700;
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Disney magical elements */
+.magic-sparkle {
+    position: absolute;
+    color: #ffd700;
+    font-size: 1rem;
+    animation: sparkle 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.princess-silhouette {
+    position: absolute;
+    opacity: 0.1;
+    color: #ffd700;
+    font-size: 8rem;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Success message */
+.success-message {
+    background: linear-gradient(45deg, #4caf50, #8bc34a);
+    color: white;
+    padding: 1rem;
+    border-radius: 10px;
+    margin-top: 1rem;
+    text-align: center;
+    display: none;
+}
+
+.success-message.show {
+    display: block;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-title {
+        font-size: 2.5rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+    }
+
+    .invitation-card {
+        padding: 2rem;
+    }
+
+    .invitation-text {
+        font-size: 1.2rem;
+    }
+
+    .countdown-display {
+        display: flex;
+        /* mantener flex */
+        flex-wrap: nowrap;
+        /* permitir que se acomoden en múltiples líneas */
+        justify-content: space-between;
+        /* centrar en pantallas pequeñas */
+        gap: 0.5rem;
+    }
+
+    .countdown-item {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0.8rem 0.5rem;
+    }
+
+    .countdown-number {
+        font-size: 1.8rem;
+    }
+
+    .countdown-label {
+        font-size: 0.7rem;
+    }
+
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .map-buttons {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .map-btn {
+        flex: 1;
+        /* Que se distribuyan equitativamente */
+        padding: 0.8rem 0.5rem;
+        font-size: 0;
+        text-align: center;
+    }
+
+    .map-btn i {
+        margin-right: 0;
+        /* Sin margen cuando no hay texto */
+        font-size: 1.6rem;
+    }
+
+    .timeline-item {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .timeline-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .music-control {
+        top: 1rem;
+        right: 1rem;
+        padding: 0.8rem;
+    }
+
+    .rsvp-form {
+        padding: 2rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .princess-silhouette {
+        font-size: 4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section {
+        padding: 1rem;
+    }
+
+    .main-title {
+        font-size: 2rem;
+    }
+
+    .countdown-display {
+        display: flex;
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 0.4rem;
+    }
+
+    .countdown-item {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0.6rem 0.3rem;
+    }
+
+    .countdown-number {
+        font-size: 1.6rem;
+    }
+
+    .countdown-label {
+        font-size: 0.6rem;
+    }
+
+    .gallery-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    .invitation-card {
+        padding: 1.5rem;
+    }
+
+    .invitation-text {
+        font-size: 1.1rem;
+    }
+
+    .map-container {
+        padding: 1rem;
+    }
+
+    .map-btn {
+        padding: 0.8rem 0.3rem;
+        font-size: 0;
+        /* Ocultar texto */
+        text-align: center;
+    }
+
+    .map-btn i {
+        margin-right: 0;
+        /* Sin margen cuando no hay texto */
+        font-size: 1.2rem;
+    }
+
+    .rsvp-form {
+        padding: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+    }
+}
+
+/* Print styles */
+@media print {
+
+    .music-control,
+    .particles,
+    .scroll-indicator {
+        display: none;
+    }
+
+    .section {
+        page-break-inside: avoid;
+        min-height: auto;
+        padding: 1rem;
+    }
+
+    body {
+        background: white;
+        color: black;
+    }
+}
