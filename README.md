@@ -11,7 +11,7 @@ Este proyecto es una invitación digital interactiva para eventos y ceremonias d
 
 ## 🌐 Sitio en vivo
 
-🔗 [Ver la invitación](https://isay83.github.io/invitations/veronica-arriaga)
+🔗 [Ver la invitación](https://isay83.github.io/invitations/docs)
 
 ---
 
@@ -32,16 +32,16 @@ Este proyecto es una invitación digital interactiva para eventos y ceremonias d
 
 ```
 📦 invitations/
-├── invitación-deseada/
-    ├──img/
-│       ├── icon-1.png
-│       ├── icon-2.png
-│       └── ...
-│   ├── music.mp3
-│   ├── index.html
-│   ├── script.js
-│   └── styles.css
-├── README.md
+    ├── docs/
+        ├──img/
+    │       ├── icon-1.png
+    │       ├── icon-2.png
+    │       └── ...
+    │   ├── music.mp3
+    │   ├── index.html
+    │   ├── script.js
+    │   └── styles.css
+    ├── README.md
 ```
 
 ---
