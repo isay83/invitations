@@ -739,6 +739,39 @@ body {
     transition: border-color 0.3s ease;
 }
 
+.form-select {
+    appearance: none;
+    /* Quitar estilo por defecto */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ffd700' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 1rem center;
+    background-repeat: no-repeat;
+    background-size: 1rem;
+    padding-right: 3rem;
+    /* Espacio para la flecha */
+}
+
+/* Estilos para las opciones del select */
+.form-select option {
+    background: #1a1a2e;
+    color: #fff;
+    padding: 0.5rem;
+    border: none;
+}
+
+.form-select option:hover,
+.form-select option:focus,
+.form-select option:checked {
+    background: #16213e;
+    color: #ffd700;
+}
+
+/* Para navegadores que no soportan backdrop-filter */
+@supports not (backdrop-filter: blur(5px)) {
+    .form-select {
+        background: rgba(26, 26, 46, 0.9);
+    }
+}
+
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
@@ -914,6 +947,70 @@ body {
     font-size: 8rem;
     pointer-events: none;
     z-index: 0;
+    right: 5%;
+    top: 20%;
+    object-fit: contain;
+
+    /* Animaciones mágicas */
+    animation: magicalFloat 6s ease-in-out infinite alternate;
+    filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.3));
+    transition: all 0.3s ease;
+}
+
+/* Animación principal de flotación */
+@keyframes magicalFloat {
+    0% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+        opacity: 0.1;
+    }
+
+    25% {
+        transform: translateY(-10px) rotate(1deg) scale(1.02);
+        opacity: 0.15;
+    }
+
+    50% {
+        transform: translateY(-5px) rotate(0deg) scale(1);
+        opacity: 0.12;
+    }
+
+    75% {
+        transform: translateY(-15px) rotate(-1deg) scale(1.01);
+        opacity: 0.18;
+    }
+
+    100% {
+        transform: translateY(-8px) rotate(0.5deg) scale(1.03);
+        opacity: 0.2;
+    }
+}
+
+/* Efecto de brillo intermitente */
+.princess-silhouette::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: magicalGlow 4s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes magicalGlow {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 0.3;
+        transform: scale(1.2);
+    }
 }
 
 /* Success message */
@@ -1078,8 +1175,54 @@ body {
     }
 
     .princess-silhouette {
-        font-size: 4rem;
+        /* Centrar horizontalmente */
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+
+        /* Centrar verticalmente */
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+        /* Tamaño más pequeño */
+        max-width: 150px;
+        max-height: 150px;
+        font-size: 6rem;
+
+        /* Más visible en pantallas pequeñas */
+        opacity: 0.15;
+
+        /* Animación centrada*/
+        animation: magicalFloatCentered 6s ease-in-out infinite alternate;
     }
+
+    @keyframes magicalFloatCentered {
+        0% {
+            transform: translate(-50%, -50%) translateY(0px) rotate(0deg) scale(1);
+            opacity: 0.15;
+        }
+
+        25% {
+            transform: translate(-50%, -50%) translateY(-8px) rotate(1deg) scale(1.02);
+            opacity: 0.2;
+        }
+
+        50% {
+            transform: translate(-50%, -50%) translateY(-4px) rotate(0deg) scale(1);
+            opacity: 0.18;
+        }
+
+        75% {
+            transform: translate(-50%, -50%) translateY(-12px) rotate(-1deg) scale(1.01);
+            opacity: 0.22;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) translateY(-6px) rotate(0.5deg) scale(1.03);
+            opacity: 0.25;
+        }
+    }
+
 }
 
 @media (max-width: 480px) {
@@ -1167,6 +1310,41 @@ body {
     .section-title {
         font-size: 1.8rem;
         margin-bottom: 2rem;
+    }
+
+    .princess-silhouette {
+        /* Mantener centrado */
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+
+        /* Tamaño aún más pequeño */
+        max-width: 120px;
+        max-height: 120px;
+        font-size: 4rem;
+
+        /* Un poco más visible */
+        opacity: 0.2;
+
+        /* Animación más sutil*/
+        animation: magicalFloatMobile 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes magicalFloatMobile {
+        0% {
+            transform: translate(-50%, -50%) translateY(0px) rotate(0deg) scale(1);
+            opacity: 0.2;
+        }
+
+        50% {
+            transform: translate(-50%, -50%) translateY(-6px) rotate(0.5deg) scale(1.01);
+            opacity: 0.25;
+        }
+
+        100% {
+            transform: translate(-50%, -50%) translateY(-3px) rotate(-0.5deg) scale(1.02);
+            opacity: 0.3;
+        }
     }
 }
 

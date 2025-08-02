@@ -25,9 +25,19 @@ const CLOUDINARY_BASE_URL = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}
 // Fotos predeterminadas (puedes agregar URLs de tus fotos)
 const defaultPhotos = [
     {
-        url: './img/vero-toga.jpeg',
+        url: './img/graduacion.png',
         title: 'Foto con Toga',
         description: 'El momento más esperado'
+    },
+    {
+        url: './img/graduacion-2.png',
+        title: 'Amigos Inseparables',
+        description: 'Atardecer Inolvidable'
+    },
+    {
+        url: './img/graduacion-3.png',
+        title: 'Emma Watson',
+        description: 'Una graduación mágica'
     },
 ];
 
@@ -82,35 +92,29 @@ function initializeCarousel() {
     startAutoPlay();
 }
 
-// Cargar fotos desde Cloudinary
+// Cargar fotos desde Cloudinary - MÉTODO ALTERNATIVO
 async function loadCloudinaryPhotos() {
-    try {
-        // URL para obtener recursos de una carpeta específica
-        const response = await fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${CLOUDINARY_FOLDER}.json`);
+    // Por ahora usar fotos por defecto hasta que implementes un backend
+    // o uses la Admin API con autenticación
+    console.log('Cargando fotos desde Cloudinary...');
 
-        if (response.ok) {
-            const data = await response.json();
+    // Aquí podrías agregar IDs específicos de fotos que hayas subido
+    const uploadedPhotoIds = [
+        'graduation-veronica/b4lpjjeov8nse3hen1ea',
+    ];
 
-            if (data.resources || data.resources.length > 0) {
-                const photos = data.resources.map((resource, index) => ({
-                    url: `${CLOUDINARY_BASE_URL}c_fill,w_800,h_400,q_auto,f_auto/${resource.public_id}`,
-                    title: `Recuerdo ${index + 1}`,
-                    description: 'Momentos especiales de graduación'
-                }));
-
-                renderCarousel(photos);
-                return;
-            }
-        }
-        // Si no hay fotos o falla la carga, usar fotos por defecto
-        console.log('No hay fotos en Cloudinary, usando fotos por defecto');
-        renderCarousel(defaultPhotos);
-
-    } catch (error) {
-        console.log('Error cargando fotos de Cloudinary', error);
+    if (uploadedPhotoIds.length > 0) {
+        const photos = uploadedPhotoIds.map((id, index) => ({
+            url: `${CLOUDINARY_BASE_URL}c_fit,q_auto,f_auto/${id}`,
+            title: `Recuerdo ${index + 1}`,
+            description: 'Momentos especiales de graduación'
+        }));
+        renderCarousel(photos);
+    } else {
         renderCarousel(defaultPhotos);
     }
 }
+
 function showUploadSuccess() {
     const successMessage = document.createElement('div');
     successMessage.className = 'success-message show';
@@ -256,7 +260,7 @@ function generateQRCode() {
     qrContainer.innerHTML = '';
 
     // URL que llevará al upload widget
-    const uploadUrl = window.location.href + '#upload';
+    const uploadUrl = window.location.href + '?upload';
 
     try {
         const qr = qrcode(0, 'M');
@@ -648,8 +652,7 @@ function addPrincessSilhouettes() {
         silhouette.src = `img/icon-${iconIndex}.png`;
         silhouette.alt = `Princess icon ${iconIndex}`;
         silhouette.style.position = 'absolute';
-        silhouette.style.right = '5%';
-        silhouette.style.top = '20%';
+
         section.appendChild(silhouette);
 
     });
@@ -823,5 +826,26 @@ document.addEventListener('keydown', function (e) {
                 block: 'start'
             });
             break;
+    }
+});
+
+// Detectar si llegan con ?upload en la URL
+window.addEventListener('load', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    if (urlParams.has('upload')) {
+        // Scroll a la sección de upload
+        const uploadSection = document.getElementById('upload');
+        if (uploadSection) {
+            uploadSection.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+
+            // Abrir automáticamente el widget después de un segundo
+            setTimeout(() => {
+                openCloudinaryWidget();
+            }, 1000);
+        }
     }
 });
