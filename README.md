@@ -11,7 +11,7 @@ Este proyecto es una invitación digital interactiva para eventos y ceremonias d
 
 ## 🌐 Sitio en vivo
 
-🔗 [Ver la invitación](https://isay83.github.io/invitations/docs)
+🔗 [Ver la invitación](https://isay83.github.io/invitations)
 
 ---
 
