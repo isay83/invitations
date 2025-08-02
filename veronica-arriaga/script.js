@@ -7,20 +7,38 @@ const backgroundMusic = document.getElementById('backgroundMusic');
 const rsvpForm = document.getElementById('rsvpForm');
 const guestCountSelect = document.getElementById('guestCount');
 const additionalNamesGroup = document.getElementById('additionalNamesGroup');
-const imageUpload = document.getElementById('imageUpload');
 
 // State variables
 let isMusicPlaying = false;
 let currentUploadTarget = null;
 
+// Variables del carrusel
+let currentSlide = 0;
+let carouselInterval;
+
+const CLOUDINARY_CLOUD_NAME = 'dhujr5kiz';
+const CLOUDINARY_UPLOAD_PRESET = 'graduation-photos';
+const CLOUDINARY_FOLDER = 'graduation-veronica';
+// URL base para mostrar fotos
+const CLOUDINARY_BASE_URL = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/`;
+
+// Fotos predeterminadas (puedes agregar URLs de tus fotos)
+const defaultPhotos = [
+    {
+        url: './img/vero-toga.jpeg',
+        title: 'Foto con Toga',
+        description: 'El momento más esperado'
+    },
+];
+
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
     initializeParticles();
+    initializeCarousel();
     initializeCountdown();
     initializeMusicControl();
     initializeRSVPForm();
     initializeSmoothScrolling();
-    initializeGallery();
     initializeLeafletMap();
     addMagicalElements();
 });
@@ -48,6 +66,219 @@ function initializeParticles() {
 
     // Create particles continuously
     setInterval(createParticle, 800);
+}
+
+// Inicializar carrusel
+function initializeCarousel() {
+    loadCloudinaryPhotos(); // Cambiar esta línea
+    generateQRCode();
+
+    // Event listeners
+    document.getElementById('prevBtn').addEventListener('click', () => changeSlide(-1));
+    document.getElementById('nextBtn').addEventListener('click', () => changeSlide(1));
+    document.getElementById('uploadBtn').addEventListener('click', openCloudinaryWidget);
+
+    // Auto-play
+    startAutoPlay();
+}
+
+// Cargar fotos desde Cloudinary
+async function loadCloudinaryPhotos() {
+    try {
+        // URL para obtener recursos de una carpeta específica
+        const response = await fetch(`https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/list/${CLOUDINARY_FOLDER}.json`);
+
+        if (response.ok) {
+            const data = await response.json();
+
+            if (data.resources || data.resources.length > 0) {
+                const photos = data.resources.map((resource, index) => ({
+                    url: `${CLOUDINARY_BASE_URL}c_fill,w_800,h_400,q_auto,f_auto/${resource.public_id}`,
+                    title: `Recuerdo ${index + 1}`,
+                    description: 'Momentos especiales de graduación'
+                }));
+
+                renderCarousel(photos);
+                return;
+            }
+        }
+        // Si no hay fotos o falla la carga, usar fotos por defecto
+        console.log('No hay fotos en Cloudinary, usando fotos por defecto');
+        renderCarousel(defaultPhotos);
+
+    } catch (error) {
+        console.log('Error cargando fotos de Cloudinary', error);
+        renderCarousel(defaultPhotos);
+    }
+}
+function showUploadSuccess() {
+    const successMessage = document.createElement('div');
+    successMessage.className = 'success-message show';
+    successMessage.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        ¡Foto subida exitosamente! Se mostrará en unos segundos.
+    `;
+
+    document.querySelector('.upload-section').appendChild(successMessage);
+
+    setTimeout(() => {
+        successMessage.remove();
+    }, 4000);
+}
+// Función para renderizar el carrusel
+function renderCarousel(photos) {
+    const track = document.getElementById('carouselTrack');
+    const indicators = document.getElementById('carouselIndicators');
+
+    // Mostrar estado de carga
+    track.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ffd700;"><i class="fas fa-spinner fa-spin"></i> Cargando fotos...</div>';
+    indicators.innerHTML = '';
+
+    // Simular un pequeño delay para mejor UX
+    setTimeout(() => {
+        track.innerHTML = '';
+
+        photos.forEach((photo, index) => {
+            // Crear slide con mejor manejo de errores
+            const slide = document.createElement('div');
+            slide.className = 'carousel-slide';
+            slide.innerHTML = `
+                <img src="${photo.url}" 
+                     alt="${photo.title}" 
+                     loading="lazy" 
+                     onerror="this.onerror=null; this.src='https://via.placeholder.com/800x400/16213e/ffd700?text=🎓+${encodeURIComponent(photo.title)}'">
+                <div class="carousel-slide-info">
+                    <h3>${photo.title}</h3>
+                    <p>${photo.description}</p>
+                </div>
+            `;
+            track.appendChild(slide);
+
+            // Crear indicador
+            const indicator = document.createElement('div');
+            indicator.className = `carousel-indicator ${index === 0 ? 'active' : ''}`;
+            indicator.addEventListener('click', () => goToSlide(index));
+            indicators.appendChild(indicator);
+        });
+    }, 500);
+}
+
+// Abrir widget de Cloudinary
+function openCloudinaryWidget() {
+    cloudinary.openUploadWidget({
+        cloudName: CLOUDINARY_CLOUD_NAME,
+        uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+        folder: CLOUDINARY_FOLDER,
+        sources: ['local', 'camera'],
+        multiple: true,
+        maxFiles: 10,
+        maxFileSize: 10000000,
+        resourceType: 'image',
+        clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        cropping: true, // Permitir recorte
+        croppingAspectRatio: 2, // Ratio 2:1 para el carousel
+        theme: 'purple',
+        styles: {
+            palette: {
+                window: '#1a1a2e',
+                windowBorder: '#ffd700',
+                tabIcon: '#ffd700',
+                menuIcons: '#ffd700',
+                textDark: '#000000',
+                textLight: '#ffffff',
+                link: '#ffd700',
+                action: '#ffd700',
+                inactiveTabIcon: '#555555',
+                error: '#ff6b6b',
+                inProgress: '#ffd700',
+                complete: '#4caf50',
+                sourceBg: '#16213e'
+            }
+        }
+    }, (error, result) => {
+        if (!error && result && result.event === "success") {
+            console.log('Foto subida exitosamente:', result.info);
+
+            // Recargar fotos después de un delay
+            setTimeout(() => {
+                loadCloudinaryPhotos();
+                showUploadSuccess();
+            }, 3000);
+        }
+    });
+}
+
+// Cambiar slide
+function changeSlide(direction) {
+    const totalSlides = defaultPhotos.length;
+    currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
+    updateCarousel();
+}
+
+// Ir a slide específico
+function goToSlide(slideIndex) {
+    currentSlide = slideIndex;
+    updateCarousel();
+}
+
+// Actualizar carrusel
+function updateCarousel() {
+    const track = document.getElementById('carouselTrack');
+    const indicators = document.querySelectorAll('.carousel-indicator');
+
+    track.style.transform = `translateX(-${currentSlide * 100}%)`;
+
+    indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('active', index === currentSlide);
+    });
+
+    // Reiniciar auto-play
+    stopAutoPlay();
+    startAutoPlay();
+}
+
+// Auto-play
+function startAutoPlay() {
+    carouselInterval = setInterval(() => {
+        changeSlide(1);
+    }, 4000); // Cambiar cada 4 segundos
+}
+
+function stopAutoPlay() {
+    if (carouselInterval) {
+        clearInterval(carouselInterval);
+    }
+}
+
+// Generar código QR
+function generateQRCode() {
+    const qrContainer = document.getElementById('qrcode');
+    qrContainer.innerHTML = '';
+
+    // URL que llevará al upload widget
+    const uploadUrl = window.location.href + '#upload';
+
+    try {
+        const qr = qrcode(0, 'M');
+        qr.addData(uploadUrl);
+        qr.make();
+
+        // Tamaño responsive del QR
+        const isMobile = window.innerWidth <= 768;
+        const qrSize = isMobile ? 3 : 4;
+
+        qrContainer.innerHTML = qr.createImgTag(qrSize);
+
+        const qrImg = qrContainer.querySelector('img');
+        if (qrImg) {
+            qrImg.style.width = '100%';
+            qrImg.style.height = '100%';
+            qrImg.style.borderRadius = '8px';
+        }
+    } catch (error) {
+        console.error('Error generando QR:', error);
+        qrContainer.innerHTML = '<div style="padding: 10px; text-align: center; font-size: 24px;">📱</div>';
+    }
 }
 
 // Countdown Timer
@@ -303,20 +534,6 @@ function getCurrentSection() {
     return getCurrentVisibleSection();
 }
 
-// Gallery System
-function initializeGallery() {
-    imageUpload.addEventListener('change', function (e) {
-        const file = e.target.files[0];
-        if (file && currentUploadTarget) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                const placeholder = document.getElementById(currentUploadTarget);
-                placeholder.innerHTML = `<img src="${e.target.result}" alt="Foto de graduación" class="gallery-image">`;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-}
 
 // Initialize Leaflet Map
 function initializeLeafletMap() {
@@ -381,11 +598,6 @@ function initializeLeafletMap() {
     }, 1000);
 }
 
-// Open image upload
-function openImageUpload(targetId) {
-    currentUploadTarget = targetId;
-    imageUpload.click();
-}
 
 // Add magical Disney-inspired elements
 function addMagicalElements() {
@@ -613,6 +825,3 @@ document.addEventListener('keydown', function (e) {
             break;
     }
 });
-
-// Make openImageUpload globally accessible
-window.openImageUpload = openImageUpload;

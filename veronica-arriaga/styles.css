@@ -489,53 +489,217 @@ body {
 }
 
 /* Gallery Section */
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
-    max-width: 1000px;
+/* Carousel Styles */
+.carousel-container {
     width: 100%;
+    max-width: 800px;
+    margin-bottom: 3rem;
 }
 
-.gallery-item {
-    aspect-ratio: 1;
-    border-radius: 15px;
-    overflow: hidden;
-    border: 3px solid rgba(255, 215, 0, 0.3);
-    transition: all 0.3s ease;
-    cursor: pointer;
+.carousel-wrapper {
     position: relative;
-}
-
-.gallery-item:hover {
-    transform: scale(1.05);
-    border-color: #ffd700;
-    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
-}
-
-.gallery-placeholder {
     width: 100%;
+    height: 400px;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s ease;
     height: 100%;
-    background: linear-gradient(45deg, rgba(255, 215, 0, 0.1), rgba(255, 255, 255, 0.1));
+}
+
+/* Mejorar carousel slides */
+.carousel-slide {
+    min-width: 100%;
+    height: 100%;
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
-    color: rgba(255, 255, 255, 0.6);
-    text-align: center;
-    padding: 1rem;
 }
 
-.gallery-placeholder i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: #ffd700;
-}
-
-.gallery-image {
+.carousel-slide img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    border-radius: 10px;
+    transition: transform 0.3s ease;
+    background: rgba(26, 26, 46, 0.5);
+}
+
+/* Efecto marco cuando la imagen no llena todo */
+.carousel-slide::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    border: 3px solid rgba(255, 215, 0, 0.3);
+    border-radius: 15px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Agregar fondo decorativo para espacios vacíos */
+.carousel-slide {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    background-image:
+        repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255, 215, 0, 0.02) 20px, rgba(255, 215, 0, 0.02) 40px);
+}
+
+/* Hover effect */
+.carousel-slide:hover img {
+    transform: scale(1.02);
+}
+
+/* Loading state para imágenes */
+.carousel-slide img[src*="placeholder"] {
+    filter: brightness(0.8);
+}
+
+/* Información del slide mejorada */
+.carousel-slide-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.9));
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    z-index: 2;
+}
+
+.carousel-slide-info h3 {
+    font-size: 1.5rem;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.carousel-slide-info p {
+    font-size: 1rem;
+    opacity: 0.9;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.carousel-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+    padding: 0 1rem;
+}
+
+.carousel-btn {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: #ffd700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: scale(1.1);
+}
+
+.carousel-indicators {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.carousel-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+    background: #ffd700;
+    transform: scale(1.2);
+}
+
+/* Upload Section */
+.upload-section {
+    width: 100%;
+    max-width: 600px;
+}
+
+.upload-btn {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #f5f5f5;
+}
+
+.upload-btn:hover {
+    border-color: #ffd700;
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+    transform: translateY(-5px);
+}
+
+.upload-btn-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.qr-container {
+    background: white;
+    padding: 1rem;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-text {
+    text-align: center;
+    flex: 1;
+    min-width: 200px;
+}
+
+.upload-text i {
+    font-size: 2.5rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+}
+
+.upload-text h3 {
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.upload-text p {
+    opacity: 0.8;
+    line-height: 1.4;
 }
 
 /* RSVP Section */
@@ -863,6 +1027,48 @@ body {
         padding: 0.8rem;
     }
 
+    .carousel-wrapper {
+        height: 300px;
+    }
+
+    .upload-btn-content {
+        flex-direction: row;
+        /* Cambiar de column a row */
+        align-items: center;
+        justify-content: flex-start;
+        text-align: left;
+        /* Cambiar de center a left */
+        gap: 1.5rem;
+    }
+
+    .qr-container {
+        order: 0;
+        /* Cambiar de -1 a 0 */
+        flex-shrink: 0;
+        width: 100px;
+        /* Tamaño fijo más pequeño */
+        height: 100px;
+        padding: 0.5rem;
+    }
+
+    .upload-text {
+        flex: 1;
+        text-align: left;
+        /* Cambiar de center a left */
+        min-width: auto;
+        /* Cambiar de 200px a auto */
+    }
+
+    .upload-text i {
+        font-size: 2rem;
+        /* Más pequeño en móvil */
+    }
+
+    .upload-text h3 {
+        font-size: 1.2rem;
+        /* Más pequeño en móvil */
+    }
+
     .rsvp-form {
         padding: 2rem;
     }
@@ -933,6 +1139,25 @@ body {
         margin-right: 0;
         /* Sin margen cuando no hay texto */
         font-size: 1.2rem;
+    }
+
+    .upload-btn-content {
+        gap: 1rem;
+    }
+
+    .qr-container {
+        width: 80px;
+        height: 80px;
+        padding: 0.3rem;
+    }
+
+    .upload-text h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .upload-text p {
+        font-size: 0.9rem;
     }
 
     .rsvp-form {
