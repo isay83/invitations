@@ -15,6 +15,7 @@ let currentUploadTarget = null;
 // Variables del carrusel
 let currentSlide = 0;
 let carouselInterval;
+let photos = []; // <-- Este arreglo contendrá las fotos activas (Cloudinary o default)
 
 const CLOUDINARY_CLOUD_NAME = 'dhujr5kiz';
 const CLOUDINARY_UPLOAD_PRESET = 'graduation-photos';
@@ -94,23 +95,20 @@ function initializeCarousel() {
 
 // Cargar fotos desde Cloudinary - MÉTODO ALTERNATIVO
 async function loadCloudinaryPhotos() {
-    // Por ahora usar fotos por defecto hasta que implementes un backend
-    // o uses la Admin API con autenticación
-    console.log('Cargando fotos desde Cloudinary...');
-
     // Aquí podrías agregar IDs específicos de fotos que hayas subido
     const uploadedPhotoIds = [
         'graduation-veronica/b4lpjjeov8nse3hen1ea',
     ];
 
     if (uploadedPhotoIds.length > 0) {
-        const photos = uploadedPhotoIds.map((id, index) => ({
+        photos = uploadedPhotoIds.map((id, index) => ({
             url: `${CLOUDINARY_BASE_URL}c_fit,q_auto,f_auto/${id}`,
             title: `Recuerdo ${index + 1}`,
             description: 'Momentos especiales de graduación'
         }));
         renderCarousel(photos);
     } else {
+        photos = defaultPhotos; // Si no hay fotos subidas, usar las predeterminadas
         renderCarousel(defaultPhotos);
     }
 }
@@ -130,9 +128,13 @@ function showUploadSuccess() {
     }, 4000);
 }
 // Función para renderizar el carrusel
-function renderCarousel(photos) {
+function renderCarousel(photoArray) {
+    photos = photoArray; // Actualizar el arreglo de fotos
+
     const track = document.getElementById('carouselTrack');
     const indicators = document.getElementById('carouselIndicators');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
     // Mostrar estado de carga
     track.innerHTML = '<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #ffd700;"><i class="fas fa-spinner fa-spin"></i> Cargando fotos...</div>';
@@ -142,7 +144,7 @@ function renderCarousel(photos) {
     setTimeout(() => {
         track.innerHTML = '';
 
-        photos.forEach((photo, index) => {
+        photoArray.forEach((photo, index) => {
             // Crear slide con mejor manejo de errores
             const slide = document.createElement('div');
             slide.className = 'carousel-slide';
@@ -150,7 +152,7 @@ function renderCarousel(photos) {
                 <img src="${photo.url}" 
                      alt="${photo.title}" 
                      loading="lazy" 
-                     onerror="this.onerror=null; this.src='https://via.placeholder.com/800x400/16213e/ffd700?text=🎓+${encodeURIComponent(photo.title)}'">
+                     onerror="this.onerror=null; this.src='https://placehold.co/800x400/191d34/ffd700?text=IMAGEN+NO+DISPONIBLE'">
                 <div class="carousel-slide-info">
                     <h3>${photo.title}</h3>
                     <p>${photo.description}</p>
@@ -158,12 +160,20 @@ function renderCarousel(photos) {
             `;
             track.appendChild(slide);
 
-            // Crear indicador
-            const indicator = document.createElement('div');
-            indicator.className = `carousel-indicator ${index === 0 ? 'active' : ''}`;
-            indicator.addEventListener('click', () => goToSlide(index));
-            indicators.appendChild(indicator);
+            // Crear indicadores solo si hay más de una foto
+            if (photoArray.length > 1) {
+                const indicator = document.createElement('div');
+                indicator.className = `carousel-indicator ${index === 0 ? 'active' : ''}`;
+                indicator.addEventListener('click', () => goToSlide(index));
+                indicators.appendChild(indicator);
+            }
         });
+
+        // Mostrar u ocultar controles según la cantidad de fotos
+        const hideControls = photoArray.length <= 1;
+        prevBtn.style.display = hideControls ? 'none' : 'block';
+        nextBtn.style.display = hideControls ? 'none' : 'block';
+        indicators.style.display = hideControls ? 'none' : 'flex';
     }, 500);
 }
 
@@ -214,7 +224,7 @@ function openCloudinaryWidget() {
 
 // Cambiar slide
 function changeSlide(direction) {
-    const totalSlides = defaultPhotos.length;
+    const totalSlides = photos.length;
     currentSlide = (currentSlide + direction + totalSlides) % totalSlides;
     updateCarousel();
 }
