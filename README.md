@@ -5,7 +5,7 @@
 [![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
 [![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-100000?style=for-the-badge&logo=github&logoColor=white)](https://pages.github.com/)
 
-Este proyecto es una invitación digital interactiva para la ceremonia de graduación de **Lic. Verónica Arriaga Salinas**. Fue desarrollado con tecnologías web puras y está disponible públicamente mediante GitHub Pages.
+Este proyecto es una invitación digital interactiva para eventos y ceremonias de **cualquer índole**. Fue desarrollado con tecnologías web puras y está disponible públicamente mediante GitHub Pages.
 
 ---
 
@@ -32,7 +32,7 @@ Este proyecto es una invitación digital interactiva para la ceremonia de gradua
 
 ```
 📦 invitations/
-├── veronica-arriaga/
+├── invitación-deseada/
     ├──img/
 │       ├── icon-1.png
 │       ├── icon-2.png
@@ -72,7 +72,7 @@ Este proyecto es una invitación digital interactiva para la ceremonia de gradua
     git clone https://github.com/isay83/invitations.git
     ```
 
-2.  Abre `index.html` en tu navegador.
+2.  Ingresa a alguna carpeta y abre el archivo `index.html` en tu navegador.
 
 3.  Personaliza imágenes, texto o enlaces según tu evento.
 
@@ -100,7 +100,7 @@ Este proyecto es una invitación digital interactiva para la ceremonia de gradua
 
 Para soporte o personalización de esta invitación:
 
-**Verónica Arriaga Salinas**  
+**Jonathan Bernal**  
  ✉️ jisay.2003@gmail.com  
  📱 [@isay83](https://github.com/isay83)
 
