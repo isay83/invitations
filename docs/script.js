@@ -314,6 +314,7 @@ function initializeCountdown() {
 function initializeMusicControl() {
     // Create audio context for better control
     backgroundMusic.volume = 0.3;
+    backgroundMusic.preload = 'none';
 
     musicControl.addEventListener('click', function () {
         if (isMusicPlaying) {
@@ -338,6 +339,53 @@ function initializeMusicControl() {
         musicIcon.className = 'fas fa-volume-xmark';
         isMusicPlaying = false;
     });
+
+    // NUEVAS FUNCIONES: Pausar cuando la página no está visible
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden && isMusicPlaying) {
+            backgroundMusic.pause();
+            // NO cambiar el icono para que el usuario sepa que estaba sonando
+        } else if (!document.hidden && isMusicPlaying) {
+            // Solo reanudar si el usuario tenía la música activada
+            backgroundMusic.play().catch(e => {
+                console.log('Resume failed:', e);
+                musicIcon.className = 'fas fa-volume-xmark';
+                isMusicPlaying = false;
+            });
+        }
+    });
+
+    // Pausar cuando pierde el foco (iOS Safari)
+    window.addEventListener('blur', function () {
+        if (isMusicPlaying) {
+            backgroundMusic.pause();
+        }
+    });
+
+    // Reanudar cuando recupera el foco
+    window.addEventListener('focus', function () {
+        if (isMusicPlaying && backgroundMusic.paused) {
+            backgroundMusic.play().catch(e => {
+                console.log('Resume on focus failed:', e);
+            });
+        }
+    });
+
+    // Pausar cuando se desplaza a otra app (móvil)
+    window.addEventListener('pagehide', function () {
+        if (isMusicPlaying) {
+            backgroundMusic.pause();
+        }
+    });
+
+    // Detectar cuando el dispositivo se bloquea (iOS)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('beforeunload', function () {
+            if (isMusicPlaying) {
+                backgroundMusic.pause();
+            }
+        });
+    }
 }
 
 // RSVP Form
@@ -436,20 +484,6 @@ function initializeSmoothScrolling() {
     let isScrolling = false;
     const container = document.querySelector('.container');
 
-    container.addEventListener('scroll', function () {
-        if (isScrolling) return;
-
-        const currentSection = getCurrentVisibleSection();
-        const sections = document.querySelectorAll('.section');
-        const section = sections[currentSection];
-
-        // Verificar si la sección actual está completamente visible
-        if (section && isSectionFullyVisible(section)) {
-            // La sección está completamente visible, permitir scroll normal
-            return;
-        }
-    });
-
     // Manejar wheel events para el scroll tipo Apple
     document.addEventListener('wheel', function (e) {
         if (isScrolling) return;
@@ -458,32 +492,44 @@ function initializeSmoothScrolling() {
         const currentSection = getCurrentVisibleSection();
         const section = sections[currentSection];
 
-        // Si la sección actual no está completamente visible, permitir scroll normal
-        if (section && !isSectionFullyVisible(section)) {
+        // NUEVA LÓGICA: Verificar si la sección necesita scroll interno
+        if (section && sectionNeedsInternalScroll(section)) {
+            // Permitir scroll normal - NO interceptar
             return;
         }
 
         // Solo hacer scroll tipo Apple si la sección está completamente visible
-        e.preventDefault();
+        if (section && isSectionFullyVisible(section)) {
+            e.preventDefault();
 
-        if (e.deltaY > 0 && currentSection < sections.length - 1) {
-            // Scroll down
-            isScrolling = true;
-            sections[currentSection + 1].scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-            setTimeout(() => isScrolling = false, 1200);
-        } else if (e.deltaY < 0 && currentSection > 0) {
-            // Scroll up
-            isScrolling = true;
-            sections[currentSection - 1].scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-            setTimeout(() => isScrolling = false, 1200);
+            if (e.deltaY > 0 && currentSection < sections.length - 1) {
+                // Scroll down
+                isScrolling = true;
+                sections[currentSection + 1].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                setTimeout(() => isScrolling = false, 1200);
+            } else if (e.deltaY < 0 && currentSection > 0) {
+                // Scroll up
+                isScrolling = true;
+                sections[currentSection - 1].scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                setTimeout(() => isScrolling = false, 1200);
+            }
         }
     }, { passive: false });
+}
+
+// NUEVA FUNCIÓN: Detectar si una sección necesita scroll interno
+function sectionNeedsInternalScroll(section) {
+    const sectionHeight = section.scrollHeight;
+    const viewportHeight = window.innerHeight;
+
+    // Si el contenido es más alto que la viewport, necesita scroll interno
+    return sectionHeight > viewportHeight;
 }
 
 // Función auxiliar para verificar si una sección está completamente visible
@@ -558,12 +604,31 @@ function initializeLeafletMap() {
         popupAnchor: [0, -15]
     });
 
+    // Prevenir que el mapa interfiera con el scroll de la página
+    const mapContainer = document.getElementById('leafletMap');
+
+    mapContainer.addEventListener('wheel', function (e) {
+        e.stopPropagation();
+    }, { passive: false });
+
+    mapContainer.addEventListener('touchstart', function (e) {
+        e.stopPropagation();
+    }, { passive: true });
+
+    mapContainer.addEventListener('touchmove', function (e) {
+        e.stopPropagation();
+    }, { passive: true });
+
+    mapContainer.addEventListener('touchend', function (e) {
+        e.stopPropagation();
+    }, { passive: true });
+
     // Agregar marcador
     const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
 
     // Popup personalizado
     marker.bindPopup(`
-        <div style="text-align: center; padding: 10px;">
+        <div style="text-align: center; padding: 10px;" onclick="event.stopPropagation();">
             <h3 style="color: #ffd700; margin-bottom: 10px;">
                 <i class="fas fa-map-marker-alt"></i> Finca El Sol
             </h3>
@@ -577,7 +642,21 @@ function initializeLeafletMap() {
                 <strong>Hora:</strong> 6:00 PM
             </p>
         </div>
-    `);
+    `).on('popupopen', function () {
+        const popup = document.querySelector('.leaflet-popup');
+
+        if (popup) {
+            popup.addEventListener('click', function (e) {
+                e.stopPropagation(); // Evitar que el popup cierre al hacer clic
+            });
+            popup.addEventListener('touchstart', function (e) {
+                e.stopPropagation(); // Evitar que el popup cierre al tocar
+            });
+            popup.addEventListener('touchend', function (e) {
+                e.stopPropagation(); // Evitar que el popup cierre al dejar de tocar
+            });
+        }
+    });
 
     // Abrir popup automáticamente
     marker.openPopup();
@@ -752,9 +831,20 @@ function handleGesture() {
     const threshold = 50; // Minimum distance for swipe
     const diff = touchStartY - touchEndY;
 
+    // No hacer nada si el evento viene del mapa
+    const target = event.target;
+    if (target.closest('#leafletMap') || target.closest('.leaflet-popup')) {
+        return;
+    }
+
     if (Math.abs(diff) > threshold) {
         const sections = document.querySelectorAll('.section');
         const currentSection = getCurrentSection();
+        const section = sections[currentSection];
+
+        if (section && sectionNeedsInternalScroll(section)) {
+            return; // Permitr scroll normal si la sección necesita scroll interno
+        }
 
         if (diff > 0 && currentSection < sections.length - 1) {
             // Swipe up - go to next section
@@ -909,6 +999,32 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(() => func.apply(this, args), wait);
     };
+}
+
+// Manejo adicional para iOS y dispositivos móviles
+if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    // Detectar cuando la app va al background en móviles
+    let isAppInBackground = false;
+
+    document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') {
+            isAppInBackground = true;
+            if (isMusicPlaying && backgroundMusic) {
+                backgroundMusic.pause();
+            }
+        } else if (document.visibilityState === 'visible' && isAppInBackground) {
+            isAppInBackground = false;
+            // No reanudar automáticamente, dejar que el usuario decida
+        }
+    });
+
+    // Para iOS: detectar cuando se presiona el botón home/power
+    window.addEventListener('pagehide', function (e) {
+        if (isMusicPlaying && backgroundMusic) {
+            backgroundMusic.pause();
+            backgroundMusic.currentTime = 0; // Opcional: reiniciar desde el inicio
+        }
+    });
 }
 
 // Registrar Service Worker
