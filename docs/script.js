@@ -19,6 +19,8 @@ let photos = []; // <-- Este arreglo contendrá las fotos activas (Cloudinary o 
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
+    preloadCriticalResources();
+    optimizeImages();
     initializeParticles();
     initializeCarousel();
     initializeCountdown();
@@ -833,3 +835,38 @@ window.addEventListener('load', function () {
         }
     }
 });
+
+// Añadir al final de script.js
+function optimizeImages() {
+    // Lazy loading para imágenes
+    const images = document.querySelectorAll('img');
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                if (img.dataset.src) {
+                    img.src = img.dataset.src;
+                    img.removeAttribute('data-src');
+                }
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    images.forEach(img => imageObserver.observe(img));
+}
+
+// Preload crítico
+function preloadCriticalResources() {
+    const criticalImages = [
+        './img/graduacion.png'
+    ];
+
+    criticalImages.forEach(src => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'image';
+        link.href = src;
+        document.head.appendChild(link);
+    });
+}
