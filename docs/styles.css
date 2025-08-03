@@ -1216,6 +1216,37 @@ body {
     }
 }
 
+/* Optimizaciones de performance */
+.particle,
+.carousel-slide,
+.princess-silhouette {
+    will-change: transform;
+}
+
+/* Reducir motion para usuarios sensibles */
+@media (prefers-reduced-motion: reduce) {
+
+    .particle,
+    .princess-silhouette,
+    .magic-sparkle {
+        animation: none;
+    }
+
+    .carousel-track {
+        transition: none;
+    }
+}
+
+/* Mejorar performance de backdrop-filter */
+@supports (backdrop-filter: blur()) {
+
+    .invitation-card,
+    .detail-card,
+    .form-input {
+        backdrop-filter: blur(10px);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-title {

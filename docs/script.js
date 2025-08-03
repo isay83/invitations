@@ -34,8 +34,13 @@ document.addEventListener('DOMContentLoaded', function () {
 // Particles System
 function initializeParticles() {
     const particlesContainer = document.getElementById('particles');
+    const isMobile = window.innerWidth <= 768;
+    const particleCount = isMobile ? 3 : 6;
+    const interval = isMobile ? 1500 : 800;
 
     function createParticle() {
+        if (particlesContainer.children.length > particleCount) return;
+
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.left = Math.random() * 100 + '%';
@@ -44,7 +49,6 @@ function initializeParticles() {
 
         particlesContainer.appendChild(particle);
 
-        // Remove particle after animation
         setTimeout(() => {
             if (particle.parentNode) {
                 particle.parentNode.removeChild(particle);
@@ -52,8 +56,7 @@ function initializeParticles() {
         }, 10000);
     }
 
-    // Create particles continuously
-    setInterval(createParticle, 800);
+    setInterval(createParticle, interval);
 }
 
 // Inicializar carrusel
@@ -146,7 +149,7 @@ function renderCarousel(photoArray) {
         prevBtn.style.display = hideControls ? 'none' : 'block';
         nextBtn.style.display = hideControls ? 'none' : 'block';
         indicators.style.display = hideControls ? 'none' : 'flex';
-    }, 500);
+    }, 200);
 }
 
 // Abrir widget de Cloudinary
@@ -836,7 +839,6 @@ window.addEventListener('load', function () {
     }
 });
 
-// Añadir al final de script.js
 function optimizeImages() {
     // Lazy loading para imágenes
     const images = document.querySelectorAll('img');
@@ -858,8 +860,9 @@ function optimizeImages() {
 
 // Preload crítico
 function preloadCriticalResources() {
+    // Solo preload de recursos que SÍ se usan siempre
     const criticalImages = [
-        './img/graduacion.png'
+        './img/icon-1.png',
     ];
 
     criticalImages.forEach(src => {
@@ -868,5 +871,55 @@ function preloadCriticalResources() {
         link.as = 'image';
         link.href = src;
         document.head.appendChild(link);
+    });
+
+    // Preload dinámico basado en photos array
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Solo preload si usa imágenes por defecto
+                if (photos === defaultPhotos || photos.length === 0) {
+                    defaultPhotos.forEach(photo => {
+                        const link = document.createElement('link');
+                        link.rel = 'preload';
+                        link.as = 'image';
+                        link.href = photo.url;
+                        document.head.appendChild(link);
+                    });
+                }
+                observer.unobserve(entry.target);
+            }
+        });
+    });
+
+    const gallerySection = document.getElementById('upload');
+    if (gallerySection) {
+        observer.observe(gallerySection);
+    }
+}
+
+// Agregar al final del archivo
+window.addEventListener('resize', debounce(() => {
+    generateQRCode();
+}, 300));
+
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('SW registrado exitosamente:', registration.scope);
+            })
+            .catch(error => {
+                console.log('SW falló al registrarse:', error);
+            });
     });
 }

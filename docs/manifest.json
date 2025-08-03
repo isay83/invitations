@@ -1,0 +1,16 @@
+{
+  "name": "Graduación - Lic. Verónica Arriaga Salinas",
+  "short_name": "Graduación",
+  "description": "Invitación digital de graduación",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#ffd700",
+  "icons": [
+    {
+      "src": "img/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
