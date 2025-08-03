@@ -482,45 +482,50 @@ function showSuccessMessage() {
 // Smooth Scrolling between sections
 function initializeSmoothScrolling() {
     let isScrolling = false;
-    const container = document.querySelector('.container');
+    let isMapInteraction = false;
 
-    // Manejar wheel events para el scroll tipo Apple
-    document.addEventListener('wheel', function (e) {
-        if (isScrolling) return;
+    // Detectar interacción con el mapa
+    const mapContainer = document.getElementById('leafletMap');
+    if (mapContainer) {
+        mapContainer.addEventListener('mouseenter', () => isMapInteraction = true);
+        mapContainer.addEventListener('mouseleave', () => isMapInteraction = false);
+        mapContainer.addEventListener('touchstart', () => isMapInteraction = true);
+        mapContainer.addEventListener('touchend', () => {
+            setTimeout(() => isMapInteraction = false, 100);
+        });
+    }
 
-        const sections = document.querySelectorAll('.section');
-        const currentSection = getCurrentVisibleSection();
-        const section = sections[currentSection];
+    // Manejar wheel events SOLO en desktop
+    if (window.innerWidth > 768) {
+        document.addEventListener('wheel', function (e) {
+            if (isScrolling || isMapInteraction) return;
 
-        // NUEVA LÓGICA: Verificar si la sección necesita scroll interno
-        if (section && sectionNeedsInternalScroll(section)) {
-            // Permitir scroll normal - NO interceptar
-            return;
-        }
+            const sections = document.querySelectorAll('.section');
+            const currentSection = getCurrentVisibleSection();
+            const section = sections[currentSection];
 
-        // Solo hacer scroll tipo Apple si la sección está completamente visible
-        if (section && isSectionFullyVisible(section)) {
-            e.preventDefault();
+            // Solo hacer scroll tipo Apple si la sección está completamente visible
+            if (section && isSectionFullyVisible(section)) {
+                e.preventDefault();
 
-            if (e.deltaY > 0 && currentSection < sections.length - 1) {
-                // Scroll down
-                isScrolling = true;
-                sections[currentSection + 1].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                setTimeout(() => isScrolling = false, 1200);
-            } else if (e.deltaY < 0 && currentSection > 0) {
-                // Scroll up
-                isScrolling = true;
-                sections[currentSection - 1].scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-                setTimeout(() => isScrolling = false, 1200);
+                if (e.deltaY > 0 && currentSection < sections.length - 1) {
+                    isScrolling = true;
+                    sections[currentSection + 1].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    setTimeout(() => isScrolling = false, 1200);
+                } else if (e.deltaY < 0 && currentSection > 0) {
+                    isScrolling = true;
+                    sections[currentSection - 1].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    setTimeout(() => isScrolling = false, 1200);
+                }
             }
-        }
-    }, { passive: false });
+        }, { passive: false });
+    }
 }
 
 // NUEVA FUNCIÓN: Detectar si una sección necesita scroll interno
@@ -576,11 +581,9 @@ function getCurrentSection() {
 
 // Initialize Leaflet Map
 function initializeLeafletMap() {
-    // Coordenadas de Finca El Sol
     const lat = 20.478539;
     const lng = -100.975340;
 
-    // Crear el mapa
     const map = L.map('leafletMap', {
         zoomControl: true,
         attributionControl: true,
@@ -589,13 +592,13 @@ function initializeLeafletMap() {
         touchZoom: true
     }).setView([lat + 0.002, lng], 15);
 
-    // Usar OpenStreetMap como base (se aplicará el filtro oscuro con CSS)
+    // Tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 19
     }).addTo(map);
 
-    // Crear marcador personalizado
+    // Custom marker
     const customIcon = L.divIcon({
         className: 'custom-marker',
         html: '<i class="fas fa-star"></i>',
@@ -604,31 +607,11 @@ function initializeLeafletMap() {
         popupAnchor: [0, -15]
     });
 
-    // Prevenir que el mapa interfiera con el scroll de la página
-    const mapContainer = document.getElementById('leafletMap');
-
-    mapContainer.addEventListener('wheel', function (e) {
-        e.stopPropagation();
-    }, { passive: false });
-
-    mapContainer.addEventListener('touchstart', function (e) {
-        e.stopPropagation();
-    }, { passive: true });
-
-    mapContainer.addEventListener('touchmove', function (e) {
-        e.stopPropagation();
-    }, { passive: true });
-
-    mapContainer.addEventListener('touchend', function (e) {
-        e.stopPropagation();
-    }, { passive: true });
-
-    // Agregar marcador
     const marker = L.marker([lat, lng], { icon: customIcon }).addTo(map);
 
-    // Popup personalizado
+    // Popup SIN stopPropagation (eso causaba problemas)
     marker.bindPopup(`
-        <div style="text-align: center; padding: 10px;" onclick="event.stopPropagation();">
+        <div style="text-align: center; padding: 10px;">
             <h3 style="color: #ffd700; margin-bottom: 10px;">
                 <i class="fas fa-map-marker-alt"></i> Finca El Sol
             </h3>
@@ -642,26 +625,11 @@ function initializeLeafletMap() {
                 <strong>Hora:</strong> 6:00 PM
             </p>
         </div>
-    `).on('popupopen', function () {
-        const popup = document.querySelector('.leaflet-popup');
+    `);
 
-        if (popup) {
-            popup.addEventListener('click', function (e) {
-                e.stopPropagation(); // Evitar que el popup cierre al hacer clic
-            });
-            popup.addEventListener('touchstart', function (e) {
-                e.stopPropagation(); // Evitar que el popup cierre al tocar
-            });
-            popup.addEventListener('touchend', function (e) {
-                e.stopPropagation(); // Evitar que el popup cierre al dejar de tocar
-            });
-        }
-    });
-
-    // Abrir popup automáticamente
     marker.openPopup();
 
-    // Agregar efecto de zoom suave al cargar
+    // Zoom suave
     setTimeout(() => {
         map.setView([lat + 0.002, lng], 16, {
             animate: true,
@@ -828,36 +796,30 @@ document.addEventListener('touchend', function (e) {
 });
 
 function handleGesture() {
-    const threshold = 50; // Minimum distance for swipe
-    const diff = touchStartY - touchEndY;
+    // SOLO en móviles Y solo si no es interacción con mapa
+    if (window.innerWidth <= 768 && !isMapInteraction) {
+        const threshold = 50;
+        const diff = touchStartY - touchEndY;
 
-    // No hacer nada si el evento viene del mapa
-    const target = event.target;
-    if (target.closest('#leafletMap') || target.closest('.leaflet-popup')) {
-        return;
-    }
+        if (Math.abs(diff) > threshold) {
+            const sections = document.querySelectorAll('.section');
+            const currentSection = getCurrentSection();
 
-    if (Math.abs(diff) > threshold) {
-        const sections = document.querySelectorAll('.section');
-        const currentSection = getCurrentSection();
-        const section = sections[currentSection];
-
-        if (section && sectionNeedsInternalScroll(section)) {
-            return; // Permitr scroll normal si la sección necesita scroll interno
-        }
-
-        if (diff > 0 && currentSection < sections.length - 1) {
-            // Swipe up - go to next section
-            sections[currentSection + 1].scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        } else if (diff < 0 && currentSection > 0) {
-            // Swipe down - go to previous section
-            sections[currentSection - 1].scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            // Solo cambiar sección si está completamente visible
+            const section = sections[currentSection];
+            if (section && isSectionFullyVisible(section)) {
+                if (diff > 0 && currentSection < sections.length - 1) {
+                    sections[currentSection + 1].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else if (diff < 0 && currentSection > 0) {
+                    sections[currentSection - 1].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
         }
     }
 }
