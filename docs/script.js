@@ -17,31 +17,6 @@ let currentSlide = 0;
 let carouselInterval;
 let photos = []; // <-- Este arreglo contendrá las fotos activas (Cloudinary o default)
 
-const CLOUDINARY_CLOUD_NAME = 'dhujr5kiz';
-const CLOUDINARY_UPLOAD_PRESET = 'graduation-photos';
-const CLOUDINARY_FOLDER = 'graduation-veronica';
-// URL base para mostrar fotos
-const CLOUDINARY_BASE_URL = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/image/upload/`;
-
-// Fotos predeterminadas (puedes agregar URLs de tus fotos)
-const defaultPhotos = [
-    {
-        url: './img/graduacion.png',
-        title: 'Foto con Toga',
-        description: 'El momento más esperado'
-    },
-    {
-        url: './img/graduacion-2.png',
-        title: 'Amigos Inseparables',
-        description: 'Atardecer Inolvidable'
-    },
-    {
-        url: './img/graduacion-3.png',
-        title: 'Emma Watson',
-        description: 'Una graduación mágica'
-    },
-];
-
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function () {
     initializeParticles();
@@ -95,17 +70,11 @@ function initializeCarousel() {
 
 // Cargar fotos desde Cloudinary - MÉTODO ALTERNATIVO
 async function loadCloudinaryPhotos() {
-    // Aquí podrías agregar IDs específicos de fotos que hayas subido
-    const uploadedPhotoIds = [
-        'graduation-veronica/b4lpjjeov8nse3hen1ea',
-        'graduation-veronica/b4lpjjeov8nse3hen1ea',
-    ];
-
-    if (uploadedPhotoIds.length > 0) {
-        photos = uploadedPhotoIds.map((id, index) => ({
-            url: `${CLOUDINARY_BASE_URL}c_fit,q_auto,f_auto/${id}`,
-            title: `Recuerdo ${index + 1}`,
-            description: 'Momentos especiales de graduación'
+    if (cloudinaryPhotos.length > 0) {
+        photos = cloudinaryPhotos.map((photo, index) => ({
+            url: `${CLOUDINARY_BASE_URL}c_fit,q_auto,f_auto/${photo.id}`,
+            title: `${index + 1}. ${photo.title}`,
+            description: photo.description
         }));
         renderCarousel(photos);
     } else {
@@ -292,6 +261,7 @@ function generateQRCode() {
             qrImg.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
             qrImg.style.margin = '0';
             qrImg.style.padding = '0';
+            qrImg.style.display = 'block';
         }
     } catch (error) {
         console.error('Error generando QR:', error);

@@ -1054,49 +1054,85 @@ body {
         transform: translateY(-5px);
     }
 
+    /* Ajustar altura total del contenedor de galería */
+    #upload.section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100vh;
+        /* asegura que toda la sección entre en la pantalla */
+        padding: 1rem;
+    }
+
     /* Ajustes para Gallery*/
     .carousel-container {
-        margin: 0;
+        flex: 1;
+        max-height: 60vh;
+        /* control de espacio para carrusel */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .carousel-wrapper {
+        height: 100%;
+        /* Asegurar que el carrusel ocupe todo el espacio */
     }
 
     .upload-section {
-        margin-top: 0;
-        /* Reducir margen superior */
+        margin-top: 1rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: auto;
     }
 
     .upload-btn {
-        padding: 0.5rem 1.5rem;
+        padding: 0.5rem 1rem;
         max-height: 80px;
+        width: auto;
     }
 
     .upload-btn-content {
-
+        flex-wrap: nowrap;
         gap: 1rem;
+        align-items: center;
     }
 
     .qr-container {
         padding: 0;
-        /* Reducir padding */
+        margin: 0;
         width: 60px;
-        /* Reducir tamaño */
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+    }
+
+    .qr-container img {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 8px !important;
+        display: block;
     }
 
     .upload-text h3 {
-        margin-bottom: 0.3rem;
-        /* Reducir margen */
         font-size: 1rem;
-        /* Reducir tamaño de fuente */
+        margin: 0;
     }
 
     .upload-text p {
-        line-height: 1.2;
-        /* Reducir line-height */
-        font-size: 0.6rem;
-        /* Reducir tamaño de fuente */
+        font-size: 0.65rem;
+        line-height: 1.1;
+        margin: 0;
     }
 
     .upload-text i {
-        margin-bottom: 0.2rem;
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
     }
 
     /* Ajustes para RSVP form */
