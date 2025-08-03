@@ -98,6 +98,7 @@ async function loadCloudinaryPhotos() {
     // Aquí podrías agregar IDs específicos de fotos que hayas subido
     const uploadedPhotoIds = [
         'graduation-veronica/b4lpjjeov8nse3hen1ea',
+        'graduation-veronica/b4lpjjeov8nse3hen1ea',
     ];
 
     if (uploadedPhotoIds.length > 0) {
@@ -288,6 +289,9 @@ function generateQRCode() {
             qrImg.style.width = '100%';
             qrImg.style.height = '100%';
             qrImg.style.borderRadius = '8px';
+            qrImg.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.2)';
+            qrImg.style.margin = '0';
+            qrImg.style.padding = '0';
         }
     } catch (error) {
         console.error('Error generando QR:', error);
@@ -297,7 +301,7 @@ function generateQRCode() {
 
 // Countdown Timer
 function initializeCountdown() {
-    const eventDate = new Date('August 30, 2025 18:30:00').getTime();
+    const eventDate = new Date('August 30, 2025 18:00:00').getTime();
 
     function updateCountdown() {
         const now = new Date().getTime();
@@ -595,7 +599,7 @@ function initializeLeafletMap() {
             </p>
             <p style="margin-bottom: 0;">
                 <strong>Fecha:</strong> 30 de Agosto, 2025<br>
-                <strong>Hora:</strong> 6:30 PM
+                <strong>Hora:</strong> 6:00 PM
             </p>
         </div>
     `);
