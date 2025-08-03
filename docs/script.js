@@ -1030,12 +1030,7 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
 // Registrar Service Worker
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        // Para GitHub Pages con subfolder
-        const swPath = window.location.pathname.includes('/invitations')
-            ? '/invitations/sw.js'
-            : './sw.js';
-
-        navigator.serviceWorker.register(swPath)
+        navigator.serviceWorker.register('./sw.js')
             .then(registration => {
                 console.log('SW registrado exitosamente:', registration.scope);
             })
