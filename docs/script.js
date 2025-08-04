@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeCarousel();
     initializeCountdown();
     initializeMusicControl();
+    initializeBackToTop();
     initializeRSVPForm();
     initializeSmoothScrolling();
     initializeLeafletMap();
@@ -35,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
 function initializeParticles() {
     const particlesContainer = document.getElementById('particles');
     const isMobile = window.innerWidth <= 768;
-    const particleCount = isMobile ? 3 : 6;
-    const interval = isMobile ? 1500 : 800;
+    const particleCount = isMobile ? 8 : 15;
+    const interval = isMobile ? 800 : 400;
 
     function createParticle() {
         if (particlesContainer.children.length > particleCount) return;
@@ -388,6 +389,32 @@ function initializeMusicControl() {
     }
 }
 
+// Back to Top Button
+function initializeBackToTop() {
+    const backToTopBtn = document.getElementById('backToTop');
+    const container = document.querySelector('.container');
+    const sections = document.querySelectorAll('.section');
+
+    // Mostrar/ocultar botón basado en la sección actual
+    container.addEventListener('scroll', function () {
+        const currentSection = getCurrentVisibleSection();
+
+        if (currentSection >= 1) { // A partir de la segunda sección (índice 1)
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    });
+
+    // Funcionalidad del botón
+    backToTopBtn.addEventListener('click', function () {
+        sections[0].scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    });
+}
+
 // RSVP Form
 function initializeRSVPForm() {
     // Show additional names field when more than 1 person
@@ -480,70 +507,70 @@ function showSuccessMessage() {
 }
 
 // Smooth Scrolling between sections
-// Smooth Scrolling between sections
 function initializeSmoothScrolling() {
     const container = document.querySelector('.container');
     if (!container) return;
 
-    let isScrolling = false; // Flag para evitar saltos múltiples
-    let scrollTimeout; // Variable para nuestro debounce
+    let isScrolling = false;
+    let scrollTimeout;
+    let lastScrollPosition = 0;
+    let scrollDirection = 0;
 
     container.addEventListener('scroll', function (e) {
-        // Si el scroll fue programático (por scrollIntoView), no hacer nada.
         if (isScrolling) return;
 
-        // --- Lógica de Debounce ---
-        // Limpiamos el timeout anterior cada vez que ocurre un evento de scroll.
+        const currentScrollPosition = container.scrollTop;
+        scrollDirection = currentScrollPosition > lastScrollPosition ? 1 : -1;
+        lastScrollPosition = currentScrollPosition;
+
         clearTimeout(scrollTimeout);
 
-        // Configuramos un nuevo timeout. La función solo se ejecutará cuando el usuario
-        // DEJE de hacer scroll por 150ms. Esto soluciona el rebote del trackpad.
         scrollTimeout = setTimeout(() => {
             const sections = document.querySelectorAll('.section');
-            const containerHeight = container.clientHeight;
-            const scrollPosition = container.scrollTop;
+            const currentSection = getCurrentVisibleSection();
+            const section = sections[currentSection];
 
-            // Encontrar la sección que está más centrada en la pantalla
-            let closestSectionIndex = 0;
-            let minDistance = Infinity;
+            // Verificar si la sección necesita scroll interno
+            if (section && sectionNeedsInternalScroll(section)) {
+                const sectionRect = section.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
 
-            sections.forEach((section, index) => {
-                const sectionTop = section.offsetTop;
-                const sectionCenter = sectionTop + (section.offsetHeight / 2);
-                const scrollCenter = scrollPosition + (containerHeight / 2);
-                const distance = Math.abs(sectionCenter - scrollCenter);
+                // Verificar si estamos en los extremos de la sección
+                const isAtTop = Math.abs(sectionRect.top - containerRect.top) < 5;
+                const isAtBottom = Math.abs(sectionRect.bottom - containerRect.bottom) < 5;
 
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    closestSectionIndex = index;
+                // Solo hacer snap si estamos en los extremos y no hay más contenido que mostrar
+                if ((isAtTop && scrollDirection === -1) || (isAtBottom && scrollDirection === 1)) {
+                    isScrolling = true;
+                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    setTimeout(() => {
+                        isScrolling = false;
+                    }, 800);
                 }
-            });
+                return; // No hacer snap si hay contenido interno por mostrar
+            }
 
-            // Una vez que el scroll se detiene, ajustamos la vista a la sección más cercana.
-            const targetSection = sections[closestSectionIndex];
-
-            // Solo hacemos el ajuste si no estamos ya perfectamente alineados (evita jiggles)
+            // Para secciones que no necesitan scroll interno, hacer snap normal
+            const targetSection = sections[currentSection];
             if (Math.abs(container.scrollTop - targetSection.offsetTop) > 1) {
                 isScrolling = true;
                 targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-                // Después de que la animación termine, reseteamos el flag.
                 setTimeout(() => {
                     isScrolling = false;
-                }, 800); // Un tiempo prudente para la animación de scroll
+                }, 800);
             }
 
-        }, 150); // 150ms de espera después del último evento de scroll
+        }, 200); // Aumentar el debounce para dar más tiempo al scroll interno
     });
 }
 
-// NUEVA FUNCIÓN: Detectar si una sección necesita scroll interno
+// Función mejorada para detectar si una sección necesita scroll interno
 function sectionNeedsInternalScroll(section) {
     const sectionHeight = section.scrollHeight;
     const viewportHeight = window.innerHeight;
 
-    // Si el contenido es más alto que la viewport, necesita scroll interno
-    return sectionHeight > viewportHeight;
+    // Si el contenido es significativamente más alto que la viewport, necesita scroll interno
+    return sectionHeight > (viewportHeight + 50); // 50px de tolerancia
 }
 
 // Función auxiliar para verificar si una sección está completamente visible
@@ -558,7 +585,7 @@ function isSectionFullyVisible(section) {
     );
 }
 
-// Función auxiliar para obtener la sección más visible
+// Función auxiliar mejorada para obtener la sección más visible
 function getCurrentVisibleSection() {
     const sections = document.querySelectorAll('.section');
     const container = document.querySelector('.container');

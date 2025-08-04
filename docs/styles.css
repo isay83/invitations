@@ -28,7 +28,7 @@ body {
 
 .container {
     scroll-snap-type: y mandatory;
-    height: 100dvh;
+    height: 100vh;
     overflow-y: scroll;
 }
 
@@ -878,6 +878,41 @@ body {
     font-size: 1.5rem;
 }
 
+/* Back to Top Button */
+.back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 215, 0, 0.3);
+    border-radius: 50px;
+    padding: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
+}
+
+.back-to-top i {
+    color: #ffd700;
+    font-size: 1.5rem;
+}
+
 /* Section titles */
 .section-title {
     font-size: 2.5rem;
@@ -1330,6 +1365,12 @@ body {
         padding: 0.8rem;
     }
 
+    .back-to-top {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.8rem;
+    }
+
     .carousel-wrapper {
         height: 300px;
     }
@@ -1381,20 +1422,18 @@ body {
     }
 
     .princess-silhouette {
-        /* Centrar horizontalmente */
+        /* Centrar en el section en móviles */
         left: 50%;
         right: auto;
-        transform: translateX(-50%);
-
-        /* Centrar verticalmente */
         top: 50%;
         transform: translate(-50%, -50%);
-
+        /* Posicionamiento relativo al section, no a la ventana */
+        position: absolute;
+        /* Mantener absolute pero relativo al section */
         /* Tamaño más pequeño */
         max-width: 150px;
         max-height: 150px;
         font-size: 6rem;
-
         /* Más visible en pantallas pequeñas */
         opacity: 0.15;
 
@@ -1515,16 +1554,14 @@ body {
     }
 
     .princess-silhouette {
-        /* Mantener centrado */
+        /* Mantener centrado en el section para pantallas muy pequeñas también */
         left: 50%;
         top: 50%;
         transform: translate(-50%, -50%);
-
         /* Tamaño aún más pequeño */
         max-width: 120px;
         max-height: 120px;
         font-size: 4rem;
-
         /* Un poco más visible */
         opacity: 0.2;
 
