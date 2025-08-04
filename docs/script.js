@@ -983,15 +983,58 @@ if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
     });
 }
 
-// Registrar Service Worker
+// Service Worker mejorado
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./sw.js')
             .then(registration => {
                 console.log('SW registrado exitosamente:', registration.scope);
+
+                // Verificar actualizaciones
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed') {
+                            if (navigator.serviceWorker.controller) {
+                                // Nueva versión disponible
+                                showUpdateNotification(newWorker);
+                            }
+                        }
+                    });
+                });
             })
             .catch(error => {
                 console.log('SW falló al registrarse:', error);
             });
     });
+}
+// Mostrar notificación de actualización
+function showUpdateNotification(worker) {
+    const notification = document.createElement('div');
+    notification.className = 'update-notification';
+    notification.innerHTML = `
+        <div class="update-content">
+            <i class="fas fa-download"></i>
+            <span>Nueva versión disponible</span>
+            <button onclick="applyUpdate()" class="update-btn">Actualizar</button>
+            <button onclick="dismissUpdate()" class="dismiss-btn">×</button>
+        </div>
+    `;
+    document.body.appendChild(notification);
+
+    window.pendingWorker = worker;
+}
+// Aplicar actualización
+function applyUpdate() {
+    if (window.pendingWorker) {
+        window.pendingWorker.postMessage({ type: 'SKIP_WAITING' });
+        window.location.reload();
+    }
+}
+// Descartar actualización
+function dismissUpdate() {
+    const notification = document.querySelector('.update-notification');
+    if (notification) {
+        notification.remove();
+    }
 }
