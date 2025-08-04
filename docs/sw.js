@@ -1,6 +1,6 @@
 const CACHE_NAME = 'graduacion-v1.0';
 const urlsToCache = [
-    '/',
+    './',
     './index.html',
     './styles.css',
     './script.js',

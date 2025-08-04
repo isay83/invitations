@@ -489,8 +489,9 @@ function initializeSmoothScrolling() {
     if (mapContainer) {
         mapContainer.addEventListener('mouseenter', () => isMapInteraction = true);
         mapContainer.addEventListener('mouseleave', () => isMapInteraction = false);
-        mapContainer.addEventListener('touchstart', () => isMapInteraction = true);
+        mapContainer.addEventListener('touchstart', () => isMapInteraction = true, { passive: true });
         mapContainer.addEventListener('touchend', () => {
+            // Un pequeño delay para evitar que el scroll se active inmediatamente
             setTimeout(() => isMapInteraction = false, 100);
         });
     }
@@ -498,30 +499,50 @@ function initializeSmoothScrolling() {
     // Manejar wheel events SOLO en desktop
     if (window.innerWidth > 768) {
         document.addEventListener('wheel', function (e) {
+            // Si estamos en medio de un salto de sección o interactuando con el mapa, no hacer nada.
             if (isScrolling || isMapInteraction) return;
 
             const sections = document.querySelectorAll('.section');
-            const currentSection = getCurrentVisibleSection();
-            const section = sections[currentSection];
+            const currentSectionIndex = getCurrentVisibleSection();
+            const section = sections[currentSectionIndex];
 
-            // Solo hacer scroll tipo Apple si la sección está completamente visible
-            if (section && isSectionFullyVisible(section)) {
-                e.preventDefault();
+            // Comprobar si la sección actual necesita scroll interno
+            const needInternalScroll = section.scrollHeight > section.clientHeight;
 
-                if (e.deltaY > 0 && currentSection < sections.length - 1) {
-                    isScrolling = true;
-                    sections[currentSection + 1].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    setTimeout(() => isScrolling = false, 1200);
-                } else if (e.deltaY < 0 && currentSection > 0) {
-                    isScrolling = true;
-                    sections[currentSection - 1].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                    setTimeout(() => isScrolling = false, 1200);
+            // Lógica del scroll hacia abajo
+            if (e.deltaY > 0) {
+                // ¿Está el scroll de la sección al final O no necesita scroll interno?
+                const isAtBottom = Math.abs(section.scrollHeight - section.scrollTop - section.clientHeight) < 5;
+                // Si estamos al final del scroll interno y la sección necesita scroll interno
+                if ((needInternalScroll && isAtBottom) || !needInternalScroll) {
+                    // Si no es la última sección, saltar a la siguiente
+                    if (currentSectionIndex < sections.length - 1) {
+                        e.preventDefault(); // Prevenir el scroll normal solo cuando saltamos
+                        isScrolling = true;
+                        sections[currentSectionIndex + 1].scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        setTimeout(() => isScrolling = false, 1200);
+                    }
+                }
+            }
+            // Lógica del scroll hacia arriba
+            else if (e.deltaY < 0) {
+                // ¿Está el scroll de la sección al inicio O no necesita scroll interno?
+                const isAtTop = section.scrollTop === 0;
+                // Si estamos al inicio del scroll interno y la sección necesita scroll interno
+                if ((needInternalScroll && isAtTop) || !needInternalScroll) {
+                    // Si no es la primera sección, saltar a la anterior
+                    if (currentSectionIndex > 0) {
+                        e.preventDefault(); // Prevenir el scroll normal solo cuando saltamos
+                        isScrolling = true;
+                        sections[currentSectionIndex - 1].scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                        setTimeout(() => isScrolling = false, 1200);
+                    }
                 }
             }
         }, { passive: false });
@@ -785,40 +806,56 @@ document.head.appendChild(style);
 // Touch gestures for mobile
 let touchStartY = 0;
 let touchEndY = 0;
+// Variable global para controlar interacción con el mapa
+let isMapInteraction = false;
+
 
 document.addEventListener('touchstart', function (e) {
+    // No registrar el inicio del toque si estamos interactuando con el mapa
+    if (e.target.closest('#leafletMap')) {
+        isMapInteraction = true;
+    }
     touchStartY = e.changedTouches[0].screenY;
-});
+}, { passive: true });
 
 document.addEventListener('touchend', function (e) {
     touchEndY = e.changedTouches[0].screenY;
     handleGesture();
+    // Resetear interacción con el mapa después del gesto
+    setTimeout(() => isMapInteraction = false, 100);
 });
 
 function handleGesture() {
-    // SOLO en móviles Y solo si no es interacción con mapa
-    if (window.innerWidth <= 768 && !isMapInteraction) {
-        const threshold = 50;
-        const diff = touchStartY - touchEndY;
+    // SOLO en móviles Y solo si NO es interacción con mapa
+    if (window.innerWidth > 768 || isMapInteraction) {
+        // Resetear el flag por si acaso y salir
+        isMapInteraction = false;
+        return;
+    }
 
-        if (Math.abs(diff) > threshold) {
-            const sections = document.querySelectorAll('.section');
-            const currentSection = getCurrentSection();
+    const threshold = 50; // Umbral de movimiento
+    const diff = touchStartY - touchEndY;
 
-            // Solo cambiar sección si está completamente visible
-            const section = sections[currentSection];
-            if (section && isSectionFullyVisible(section)) {
-                if (diff > 0 && currentSection < sections.length - 1) {
-                    sections[currentSection + 1].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                } else if (diff < 0 && currentSection > 0) {
-                    sections[currentSection - 1].scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
+    if (Math.abs(diff) > threshold) {
+        const sections = document.querySelectorAll('.section');
+        const currentSectionIndex = getCurrentVisibleSection();
+        const section = sections[currentSectionIndex];
+
+        // Lógica similar a la del scroll con mouse
+        const needInternalScroll = section.scrollHeight > section.clientHeight;
+
+        // Swipe hacia arriba (subir contenido, ir a sección siguiente)
+        if (diff > 0) {
+            const isAtBottom = Math.abs(section.scrollHeight - section.scrollTop - section.clientHeight) < 5;
+            if (((needsInternalScroll && isAtBottom) || !needsInternalScroll) && currentSectionIndex < sections.length - 1) {
+                sections[currentSectionIndex + 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        // Swipe hacia abajo (bajar contenido, ir a sección anterior)
+        else if (diff < 0) {
+            const isAtTop = section.scrollTop === 0;
+            if (((needsInternalScroll && isAtTop) || !needsInternalScroll) && currentSectionIndex > 0) {
+                sections[currentSectionIndex - 1].scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
     }
