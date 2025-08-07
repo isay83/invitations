@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1.2'; // Incrementa este número para forzar actualizaciones
+const CACHE_VERSION = 'v1.3'; // Incrementa este número para forzar actualizaciones
 const CACHE_NAME = `graduacion-cache-${CACHE_VERSION}`;
 const urlsToCache = [
     './',
