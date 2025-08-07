@@ -6,11 +6,17 @@ const urlsToCache = [
     './styles.css',
     './script.js',
     './photos.js',
+    './manifest.json',
+    './mickey.html',  // Nuevo archivo del juego
+    './mickey.css',   // Nuevo archivo CSS del juego
+    './mickey.js',    // Nuevo archivo JS del juego
+    './records.json', // Nuevo archivo JSON para records
     './img/logo.png',
     './img/logo.ico',
     './img/graduacion.png',
     './img/graduacion-2.png',
     './img/graduacion-3.png',
+    './img/icon-10.png',  // Icono de Mickey
     './a-star-shines-for-you.mp3',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css',
     'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css',
@@ -66,7 +72,7 @@ self.addEventListener('fetch', event => {
                     }
                     return fetch(event.request).then(fetchResponse => {
                         // Cachear dinámicamente nuevos recursos
-                        if (fetchResponse.ok) {
+                        if (fetchResponse.ok && fetchResponse.status === 200 && !fetchResponse.headers.has('Content-Range')) {
                             const responseClone = fetchResponse.clone();
                             caches.open(CACHE_NAME)
                                 .then(cache => cache.put(event.request, responseClone));

@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeParticles();
     initializeCarousel();
     initializeCountdown();
+    initializeGameButtonVisibility();
     initializeMusicControl();
     initializeBackToTop();
     initializeRSVPForm();
@@ -311,6 +312,23 @@ function initializeCountdown() {
     setInterval(updateCountdown, 1000);
 }
 
+// Game Button Visibility
+function initializeGameButtonVisibility() {
+    const gameBtnContainer = document.getElementById('gameButtonContainer');
+    const container = document.querySelector('.container');
+
+    container.addEventListener('scroll', function () {
+        const currentSection = getCurrentVisibleSection();
+
+        // Mostrar solo en la primera sección (índice 0)
+        if (currentSection === 0) {
+            gameBtnContainer.classList.remove('hide');
+        } else {
+            gameBtnContainer.classList.add('hide');
+        }
+    });
+}
+
 // Music Control
 function initializeMusicControl() {
     // Create audio context for better control
@@ -389,7 +407,7 @@ function initializeMusicControl() {
     }
 }
 
-// Back to Top Button
+// Back to Top Button Visibility
 function initializeBackToTop() {
     const backToTopBtn = document.getElementById('backToTop');
     const container = document.querySelector('.container');

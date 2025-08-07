@@ -25,6 +25,9 @@
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
+    <!-- Para Chrome y otros navegadores basados en Chromium -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <!-- Para Safari en iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-title" content="Graduación Verónica">
 
@@ -65,7 +68,14 @@
 <body>
     <!-- Particles -->
     <div class="particles" id="particles"></div>
-
+    <!-- Botón de juego -->
+    <div class="game-button-container" id="gameButtonContainer">
+        <a href="./mickey.html" class="game-button">
+            <img src="./img/icon-10.png" alt="Mickey Mouse" class="mickey-icon">
+            <span>Jugar</span>
+            <i class="fas fa-gamepad"></i>
+        </a>
+    </div>
     <!-- Music Control -->
     <div class="music-control" id="musicControl">
         <i class="fas fa-volume-xmark" id="musicIcon"></i>

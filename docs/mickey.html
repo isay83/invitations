@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mickey Mouse Snake - Graduación</title>
+    <meta name="description" content="Juego de Snake con Mickey Mouse - Celebración de Graduación">
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="Mickey Snake">
+    <meta name="theme-color" content="#ffd700">
+
+    <!-- Favicon -->
+    <link rel="icon" href="./img/logo.ico" type="image/x-icon">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="./mickey.css">
+</head>
+
+<body>
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <div class="game-header">
+        <!-- Controles flotantes -->
+        <div id="controls">
+            <button id="homeBtn" class="control-btn"><i class="fa fa-home"></i> Home</button>
+            <button id="pauseBtn" class="control-btn"><i class="fa fa-pause"></i> Pausar</button>
+        </div>
+
+        <!-- Overlay de Pausa -->
+        <div id="pauseOverlay">
+            <div class="overlay-content">
+                <button id="resumeBtn" class="overlay-btn">Continuar</button>
+                <button id="homeFromPauseBtn" class="overlay-btn">Home</button>
+            </div>
+        </div>
+
+
+        <div class="score-display">
+            <div class="score-item">
+                <span class="score-value" id="currentScore">0</span>
+                <span class="score-label">Puntos</span>
+            </div>
+            <div class="score-item">
+                <span class="score-value" id="personalRecord">0</span>
+                <span class="score-label">Récord Personal</span>
+            </div>
+            <div class="score-item" id="globalRecordDisplay" style="display: none;">
+                <span class="score-value" id="globalRecord">0</span>
+                <span class="score-label">Récord Global</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div class="game-container">
+        <canvas id="gameCanvas" class="game-canvas"></canvas>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls">
+        <div class="mobile-control-container">
+            <!-- Action buttons -->
+            <div class="mobile-actions">
+                <button id="homeBtnMobile" class="control-btn mobile-control-btn">
+                    <i class="fa fa-home"></i>
+                </button>
+                <button id="pauseBtnMobile" class="control-btn mobile-control-btn">
+                    <i class="fa fa-pause"></i>
+                </button>
+            </div>
+            <!-- Directional buttons -->
+            <div class="controls-grid">
+                <button class="control-btn btn-up" data-direction="up">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+                <button class="control-btn btn-left" data-direction="left">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="control-btn btn-right" data-direction="right">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <button class="control-btn btn-down" data-direction="down">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Screen -->
+    <div class="start-screen" id="startScreen">
+        <div class="start-content">
+            <h1>🐭 Mickey Snake</h1>
+            <p>¡Ayuda a Mickey a comer todo el queso que pueda!</p>
+
+            <div class="instructions">
+                <h3>📋 Instrucciones:</h3>
+                <ul>
+                    <li><i class="fas fa-keyboard"></i> Usa WASD o las flechas para mover a Mickey</li>
+                    <li><i class="fas fa-mobile"></i> En móvil, usa los botones de la pantalla</li>
+                    <li><i class="fas fa-cheese"></i> Come queso para crecer y ganar puntos</li>
+                    <li><i class="fas fa-exclamation-triangle"></i> ¡No choques con las paredes o contigo mismo!</li>
+                </ul>
+            </div>
+
+            <button class="play-again-btn" onclick="startGame()">
+                <i class="fas fa-play"></i> ¡Comenzar!
+            </button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="game-over" id="gameOverScreen">
+        <div class="game-over-content">
+            <h2>🎯 ¡Juego Terminado!</h2>
+            <div class="final-score">
+                Puntos: <span id="finalScore">0</span>
+            </div>
+            <div class="record-info" id="recordInfo"></div>
+            <button class="play-again-btn" onclick="restartGame()">
+                <i class="fas fa-redo"></i> Jugar de Nuevo
+            </button>
+        </div>
+    </div>
+
+    <script src="./mickey.js"></script>
+</body>
+
+</html>
