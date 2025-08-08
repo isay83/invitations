@@ -253,7 +253,9 @@ body {
     bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 100;
+    max-width: calc(100vw - 2rem);
+    /* Evitar desbordamiento */
+    z-index: 50;
     animation: fadeInUp 0.6s ease-out;
 }
 
@@ -505,7 +507,22 @@ body {
 
     .game-container {
         padding: 0.5rem;
-        padding-bottom: 200px;
+        padding-bottom: 280px;
+        /* Aumentar de 200px a 280px */
+        height: calc(100vh - 140px);
+        /* Ajustar altura disponible */
+        display: flex;
+        align-items: flex-start;
+        /* Cambiar de center a flex-start */
+        justify-content: center;
+        padding-top: 1rem;
+    }
+
+    /* Asegurar que el canvas no crezca demasiado */
+    .game-canvas {
+        max-width: calc(100vw - 2rem);
+        max-height: calc(100vh - 380px);
+        /* Reducir altura máxima */
     }
 }
 
@@ -523,8 +540,20 @@ body {
         min-width: 80px;
     }
 
+    .game-container {
+        padding-bottom: 300px;
+        /* Más espacio en pantallas pequeñas */
+        height: calc(100vh - 120px);
+    }
+
+    .mobile-control-container {
+        gap: 1rem;
+        /* Reducir gap entre elementos */
+    }
+
     .controls-grid {
-        width: 220px;
+        width: 200px;
+        /* Reducir tamaño del grid de controles */
     }
 
     .control-btn {

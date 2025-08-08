@@ -525,6 +525,7 @@ function showSuccessMessage() {
 }
 
 // Smooth Scrolling between sections
+// Smooth Scrolling mejorado para Safari iOS
 function initializeSmoothScrolling() {
     const container = document.querySelector('.container');
     if (!container) return;
@@ -533,6 +534,9 @@ function initializeSmoothScrolling() {
     let scrollTimeout;
     let lastScrollPosition = 0;
     let scrollDirection = 0;
+
+    // Detectar Safari iOS
+    const isSafariIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
     container.addEventListener('scroll', function (e) {
         if (isScrolling) return;
@@ -553,33 +557,76 @@ function initializeSmoothScrolling() {
                 const sectionRect = section.getBoundingClientRect();
                 const containerRect = container.getBoundingClientRect();
 
-                // Verificar si estamos en los extremos de la sección
-                const isAtTop = Math.abs(sectionRect.top - containerRect.top) < 5;
-                const isAtBottom = Math.abs(sectionRect.bottom - containerRect.bottom) < 5;
+                // Para Safari iOS: ajustar tolerancia
+                const tolerance = isSafariIOS ? 20 : 5;
+                const isAtTop = Math.abs(sectionRect.top - containerRect.top) < tolerance;
+                const isAtBottom = Math.abs(sectionRect.bottom - containerRect.bottom) < tolerance;
 
-                // Solo hacer snap si estamos en los extremos y no hay más contenido que mostrar
+                // Solo hacer snap si estamos en los extremos
                 if ((isAtTop && scrollDirection === -1) || (isAtBottom && scrollDirection === 1)) {
                     isScrolling = true;
-                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    if (isSafariIOS) {
+                        // Para Safari iOS: scroll personalizado
+                        const targetScrollTop = scrollDirection === -1 ?
+                            Math.max(0, section.offsetTop - 10) :
+                            Math.min(container.scrollHeight - container.clientHeight, section.offsetTop + section.offsetHeight - container.clientHeight + 10);
+
+                        smoothScrollTo(container, targetScrollTop, 600);
+                    } else {
+                        section.scrollIntoView({ behavior: 'smooth', block: scrollDirection === -1 ? 'end' : 'start' });
+                    }
+
                     setTimeout(() => {
                         isScrolling = false;
-                    }, 800);
+                    }, isSafariIOS ? 700 : 800);
                 }
-                return; // No hacer snap si hay contenido interno por mostrar
+                return;
             }
 
-            // Para secciones que no necesitan scroll interno, hacer snap normal
+            // Para secciones que no necesitan scroll interno
             const targetSection = sections[currentSection];
             if (Math.abs(container.scrollTop - targetSection.offsetTop) > 1) {
                 isScrolling = true;
-                targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                if (isSafariIOS) {
+                    smoothScrollTo(container, targetSection.offsetTop, 600);
+                } else {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+
                 setTimeout(() => {
                     isScrolling = false;
-                }, 800);
+                }, isSafariIOS ? 700 : 800);
             }
 
-        }, 200); // Aumentar el debounce para dar más tiempo al scroll interno
+        }, isSafariIOS ? 300 : 200);
     });
+}
+
+// Función auxiliar para scroll suave personalizado (Safari iOS)
+function smoothScrollTo(element, target, duration) {
+    const start = element.scrollTop;
+    const change = target - start;
+    const startTime = performance.now();
+
+    function animateScroll(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function para Safari
+        const easeInOutCubic = progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+
+        element.scrollTop = start + (change * easeInOutCubic);
+
+        if (progress < 1) {
+            requestAnimationFrame(animateScroll);
+        }
+    }
+
+    requestAnimationFrame(animateScroll);
 }
 
 // Función mejorada para detectar si una sección necesita scroll interno
@@ -587,8 +634,12 @@ function sectionNeedsInternalScroll(section) {
     const sectionHeight = section.scrollHeight;
     const viewportHeight = window.innerHeight;
 
+    // Para Safari iOS: ajustar tolerancia
+    const isSafariIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const tolerance = isSafariIOS ? 100 : 50;
+
     // Si el contenido es significativamente más alto que la viewport, necesita scroll interno
-    return sectionHeight > (viewportHeight + 50); // 50px de tolerancia
+    return sectionHeight > (viewportHeight + tolerance);
 }
 
 // Función auxiliar para verificar si una sección está completamente visible

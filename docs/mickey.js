@@ -28,6 +28,11 @@ class MickeySnakeGame {
         this.recordHolder = '';
         this.lastUpdated = '';
 
+        this.inputQueue = [];
+        this.maxQueueSize = 2;
+        this.lastDirectionChange = 0;
+        this.minDirectionInterval = 100; // ms
+
         // Initialize
         this.initializeGame();
         this.setupEventListeners();
@@ -82,28 +87,30 @@ class MickeySnakeGame {
             if (this.paused) return;
 
             const key = e.key.toLowerCase();
+            const now = Date.now();
 
-            const prevDx = this.dx;
-            const prevDy = this.dy;
+            // 3) Evitar cambios de dirección demasiado rápidos
+            if (now - this.lastDirectionChange < this.minDirectionInterval) {
+                return;
+            }
 
-            let newDx = this.dx;
-            let newDy = this.dy;
+            let newDirection = null;
 
             // Calculate new direction
             if ((key === 'w' || key === 'arrowup') && this.dy !== 1) {
-                newDx = 0; newDy = -1;
+                newDirection = { dx: 0, dy: -1 };
             } else if ((key === 's' || key === 'arrowdown') && this.dy !== -1) {
-                newDx = 0; newDy = 1;
+                newDirection = { dx: 0, dy: 1 };
             } else if ((key === 'a' || key === 'arrowleft') && this.dx !== 1) {
-                newDx = -1; newDy = 0;
+                newDirection = { dx: -1, dy: 0 };
             } else if ((key === 'd' || key === 'arrowright') && this.dx !== -1) {
-                newDx = 1; newDy = 0;
+                newDirection = { dx: 1, dy: 0 };
             }
 
-            // Prevent reverse direction
-            if (newDx !== prevDx || newDy !== prevDy) {
-                this.dx = newDx;
-                this.dy = newDy;
+            // Solo procesar si es una dirección válida y diferente
+            if (newDirection && (newDirection.dx !== this.dx || newDirection.dy !== this.dy)) {
+                this.addToInputQueue(newDirection);
+                this.lastDirectionChange = now;
             }
         });
 
@@ -183,6 +190,9 @@ class MickeySnakeGame {
 
     update() {
         if (!this.gameRunning) return;
+
+        // Procesar cola de inputs
+        this.processInputQueue();
 
         // Move Mickey
         const head = { x: this.mickey[0].x + this.dx, y: this.mickey[0].y + this.dy };
@@ -363,7 +373,12 @@ class MickeySnakeGame {
 
         this.update();
         if (this.gameRunning) {
-            setTimeout(() => this.gameLoop(), 150); // Game speed
+            // Velocidad adaptativa
+            const isMobile = window.innerWidth <= 768;
+            const baseSpeed = 150; // Base speed in ms
+            const mobileSpeedAdjustment = Math.max(1, this.canvas.width / 400); // Adjust speed based on canvas width
+            const gameSpeed = isMobile ? baseSpeed * mobileSpeedAdjustment : baseSpeed;
+            setTimeout(() => this.gameLoop(), gameSpeed); // Game speed
         }
     }
 
@@ -476,6 +491,42 @@ class MickeySnakeGame {
         // Aplicar nueva dirección
         this.dx = newDx;
         this.dy = newDy;
+    }
+    // Añadir dirección a la cola de inputs
+    addToInputQueue(direction) {
+        // Evitar direcciones duplicadas consecutivas
+        const lastInput = this.inputQueue[this.inputQueue.length - 1];
+        if (lastInput && lastInput.dx === direction.dx && lastInput.dy === direction.dy) {
+            return;
+        }
+
+        // Mantener cola limitada
+        if (this.inputQueue.length >= this.maxQueueSize) {
+            this.inputQueue.shift();
+        }
+
+        this.inputQueue.push(direction);
+    }
+    // Procesar la cola de inputs
+    processInputQueue() {
+        if (this.inputQueue.length === 0) return;
+
+        const nextInput = this.inputQueue[0];
+
+        // Verificar si el input es válido (no dirección opuesta)
+        if ((nextInput.dx === 1 && this.dx === -1) || (nextInput.dx === -1 && this.dx === 1) ||
+            (nextInput.dy === 1 && this.dy === -1) || (nextInput.dy === -1 && this.dy === 1)) {
+            // Remover input inválido
+            this.inputQueue.shift();
+            return;
+        }
+
+        // Aplicar dirección
+        this.dx = nextInput.dx;
+        this.dy = nextInput.dy;
+
+        // Remover input procesado
+        this.inputQueue.shift();
     }
 }
 
