@@ -83,15 +83,27 @@ class MickeySnakeGame {
 
             const key = e.key.toLowerCase();
 
-            // Prevent reverse direction
+            const prevDx = this.dx;
+            const prevDy = this.dy;
+
+            let newDx = this.dx;
+            let newDy = this.dy;
+
+            // Calculate new direction
             if ((key === 'w' || key === 'arrowup') && this.dy !== 1) {
-                this.dx = 0; this.dy = -1;
+                newDx = 0; newDy = -1;
             } else if ((key === 's' || key === 'arrowdown') && this.dy !== -1) {
-                this.dx = 0; this.dy = 1;
+                newDx = 0; newDy = 1;
             } else if ((key === 'a' || key === 'arrowleft') && this.dx !== 1) {
-                this.dx = -1; this.dy = 0;
+                newDx = -1; newDy = 0;
             } else if ((key === 'd' || key === 'arrowright') && this.dx !== -1) {
-                this.dx = 1; this.dy = 0;
+                newDx = 1; newDy = 0;
+            }
+
+            // Prevent reverse direction
+            if (newDx !== prevDx || newDy !== prevDy) {
+                this.dx = newDx;
+                this.dy = newDy;
             }
         });
 
@@ -99,22 +111,22 @@ class MickeySnakeGame {
         // Mobile controls
         document.querySelectorAll('.control-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                if (!this.gameRunning) return;
+                if (!this.gameRunning || this.paused) return;
 
                 const direction = e.target.closest('.control-btn').dataset.direction;
 
                 switch (direction) {
                     case 'up':
-                        if (this.dy !== 1) { this.dx = 0; this.dy = -1; }
+                        this.changeDirection(0, -1);
                         break;
                     case 'down':
-                        if (this.dy !== -1) { this.dx = 0; this.dy = 1; }
+                        this.changeDirection(0, 1);
                         break;
                     case 'left':
-                        if (this.dx !== 1) { this.dx = -1; this.dy = 0; }
+                        this.changeDirection(-1, 0);
                         break;
                     case 'right':
-                        if (this.dx !== -1) { this.dx = 1; this.dy = 0; }
+                        this.changeDirection(1, 0);
                         break;
                 }
             });
@@ -451,6 +463,19 @@ class MickeySnakeGame {
         } catch (err) {
             console.log('No se pudo cargar el récord global', err);
         }
+    }
+
+    // Función para cambiar dirección de forma segura
+    changeDirection(newDx, newDy) {
+        // Verificar que no sea dirección opuesta
+        if ((newDx === 1 && this.dx === -1) || (newDx === -1 && this.dx === 1) ||
+            (newDy === 1 && this.dy === -1) || (newDy === -1 && this.dy === 1)) {
+            return; // Ignorar cambio de dirección opuesta
+        }
+
+        // Aplicar nueva dirección
+        this.dx = newDx;
+        this.dy = newDy;
     }
 }
 
